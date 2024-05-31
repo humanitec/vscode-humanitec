@@ -1,0 +1,45 @@
+name: ci
+
+on:
+  push:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest] # windows-latest should also be tested, but currently fails due to https://github.com/mochajs/mocha/issues/4851
+    runs-on: ${{ matrix.os }}
+    env:
+      TEST_HUMANITEC_TOKEN: ${{ secrets.HUMANITEC_TOKEN }}
+      TEST_HUMANITEC_ORG: ${{ secrets.HUMANITEC_ORG }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18.x
+
+      - run: npm ci
+
+      - run: npm run lint
+
+      - run: xvfb-run -a npm test
+        if: runner.os == 'Linux'
+
+      - run: npm test
+        if: runner.os != 'Linux'
+
+      - name: Validate extension is packable
+        if: runner.os == 'Linux'
+        run: npx vsce package
+
+      - name: Publish
+        if: success() && startsWith(github.ref, 'refs/tags/') && runner.os == 'Linux'
+        run: npm run deploy
+        env:
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}

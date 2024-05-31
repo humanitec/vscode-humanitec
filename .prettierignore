@@ -1,0 +1,8 @@
+.vscode/
+.github/
+.vscode-test/
+media/
+node_modules/
+out/
+sandbox/
+README.md
