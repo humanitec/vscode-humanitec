@@ -1,0 +1,199 @@
+{
+  "name": "humanitec",
+  "displayName": "Humanitec",
+  "publisher": "humanitec",
+  "description": "This extension is designed to enhance your experience when working with the Humanitec Platform directly from Visual Studio Code. It provides a set of features to streamline your workflow, making it easier to manage your applications, components, and configurations.",
+  "icon": "media/humanitec_logo.png",
+  "version": "0.0.0",
+  "engines": {
+    "vscode": "^1.87.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/humanitec/vscode-humanitec.git"
+  },
+  "main": "./out/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "humanitec-sidebar-view",
+          "title": "Humanitec",
+          "icon": "media/humanitec.svg"
+        }
+      ]
+    },
+    "views": {
+      "humanitec-sidebar-view": [
+        {
+          "type": "tree",
+          "id": "humanitec-sidebar-available-resource-types",
+          "name": "Available resources",
+          "contextualTitle": "Humanitec - Available resources"
+        },
+        {
+          "type": "tree",
+          "id": "humanitec-sidebar-organization-structure",
+          "name": "Organization structure",
+          "contextualTitle": "Humanitec - Organization structure"
+        }
+      ]
+    },
+    "menus": {
+      "view/title": [
+        {
+          "command": "humanitec.sidebar.availableResources.refreshEntries",
+          "when": "view == humanitec-sidebar-available-resource-types",
+          "group": "navigation"
+        },
+        {
+          "command": "humanitec.sidebar.organization_structure.refreshEntries",
+          "when": "view == humanitec-sidebar-organization-structure",
+          "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "humanitec.sidebar.availableResources.open_resource_type_doc",
+          "when": "view == humanitec-sidebar-available-resource-types && viewItem == resource_type",
+          "group": "inline"
+        },
+        {
+          "command": "humanitec.sidebar.organization_structure.set_in_workspace",
+          "when": "view == humanitec-sidebar-organization-structure && viewItem == set_in_workspace"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "humanitec.score.init",
+        "category": "Humanitec",
+        "title": "Initialize Score"
+      },
+      {
+        "command": "humanitec.score.validate",
+        "category": "Humanitec",
+        "title": "Validate Score"
+      },
+      {
+        "command": "humanitec.set_token",
+        "category": "Humanitec",
+        "title": "Set token"
+      },
+      {
+        "command": "humanitec.login",
+        "category": "Humanitec",
+        "title": "Login"
+      },
+      {
+        "command": "humanitec.open_configured_terminal",
+        "category": "Humanitec",
+        "title": "Open configured terminal"
+      },
+      {
+        "command": "humanitec.display_resources_graph",
+        "category": "Humanitec",
+        "title": "Display resource graph"
+      },
+      {
+        "command": "humanitec.sidebar.availableResources.refreshEntries",
+        "category": "Humanitec",
+        "title": "Refresh available resources",
+        "icon": {
+          "dark": "./media/refresh_dark.svg",
+          "light": "./media/refresh_light.svg"
+        }
+      },
+      {
+        "command": "humanitec.sidebar.availableResources.open_resource_type_doc",
+        "category": "Humanitec",
+        "title": "Open resource type documentation",
+        "icon": {
+          "light": "./media/globe_light.svg",
+          "dark": "./media/globe_dark.svg"
+        }
+      },
+      {
+        "command": "humanitec.sidebar.organization_structure.refreshEntries",
+        "category": "Humanitec",
+        "title": "Refresh organization structure",
+        "icon": {
+          "dark": "./media/refresh_dark.svg",
+          "light": "./media/refresh_light.svg"
+        }
+      },
+      {
+        "command": "humanitec.sidebar.organization_structure.set_in_workspace",
+        "category": "Humanitec",
+        "title": "Set in workspace"
+      }
+    ],
+    "configuration": {
+      "title": "Humanitec",
+      "properties": {
+        "humanitec.organization": {
+          "type": "string",
+          "default": "",
+          "description": "Specifies the Humanitec organization"
+        },
+        "humanitec.application": {
+          "type": "string",
+          "default": "",
+          "description": "Specifies the Humanitec application"
+        },
+        "humanitec.environment": {
+          "type": "string",
+          "default": "",
+          "description": "Specifies the Humanitec environment"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "preinstall": "./scripts/download-humctl.sh",
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint .",
+    "test": "vscode-test",
+    "prettier": "npx prettier . --write",
+    "package": "vsce package",
+    "deploy": "vsce publish"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.3.16",
+    "@types/js-yaml": "^4.0.9",
+    "@types/mocha": "^10.0.6",
+    "@types/node": "20.x",
+    "@types/sinon": "^17.0.3",
+    "@types/sinon-chai": "^3.2.12",
+    "@types/vscode": "1.87.0",
+    "@vscode/test-cli": "^0.0.9",
+    "@vscode/test-electron": "^2.4.0",
+    "@vscode/vsce": "^2.26.1",
+    "chai": "^4.4.1",
+    "eslint": "^9.3.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.1.3",
+    "mocha": "^10.4.0",
+    "prettier": "^3.2.5",
+    "sinon": "^18.0.0",
+    "sinon-chai": "^3.7.0",
+    "typescript": "^5.4.5",
+    "typescript-eslint": "^8.0.0-alpha.22",
+    "wait-for-expect": "^3.0.2"
+  },
+  "dependencies": {
+    "@vscode/webview-ui-toolkit": "^1.4.0",
+    "crypto": "^1.0.1",
+    "js-yaml": "^4.1.0",
+    "yaml": "^2.4.2"
+  }
+}
