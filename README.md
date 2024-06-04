@@ -2,7 +2,7 @@
 
 ## Overview
 
-Welcome to the Humanitec Platform VSCode Extension! This extension is designed to enhance your experience when working with the Humanitec Platform Orchestrator directly from Visual Studio Code. It provides a set of features to streamline your workflow, making it easier to manage your applications, components, and configurations.
+Welcome to the Humanitec Platform VSCode Extension! This extension is designed to enhance your experience when working with the Humanitec Platform Orchestrator directly from Visual Studio Code. It provides a set of features to simplify your workflow, making it easier to manage your applications, components, and configurations.
 
 ## Features
 
@@ -14,7 +14,7 @@ Quickly view all available resource types that developers can use in Score files
 
 ### 2. Validate Score Files
 
-Ensure the correctness of your Score files by leveraging the built-in validation feature. Detect and fix errors early in the development process to streamline your deployment workflow.
+Ensure the correctness of your Score files by leveraging the built-in validation feature. Detect and fix errors early in the development process to simplify your deployment workflow.
 
 ![](docs/assets/validation.gif)
 
