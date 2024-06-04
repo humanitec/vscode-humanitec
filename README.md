@@ -57,7 +57,7 @@ Effortlessly switch between different organizations, applications, and environme
 
 ## Feedback and Issues
 
-We welcome your feedback and encourage you to report any issues you encounter. Contact us at <product@humanitec.com>, we're looking forward to hearing from you.
+We welcome your feedback and encourage you to report any issues you encounter. Feel free to open an issue on our [GitHub repository](https://github.com/mateuszjenek/vscode-humanitec/issues).
 
 ## License
 
