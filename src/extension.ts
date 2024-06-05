@@ -19,7 +19,7 @@ import { HumctlAdapter } from './adapters/humctl/HumctlAdapter';
 import { LoginController } from './controllers/LoginController';
 import { LoginService } from './services/LoginService';
 
-const loggerChannel = vscode.window.createOutputChannel('Humanitec');
+export const loggerChannel = vscode.window.createOutputChannel('Humanitec');
 
 export async function activate(context: vscode.ExtensionContext) {
   const logger = new LoggerService(loggerChannel);
