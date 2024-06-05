@@ -1,3 +1,5 @@
+#!/bin/sh
+
 CLI_VERSION=0.24.0
 
 mkdir -p ./humctl
