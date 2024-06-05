@@ -13,6 +13,8 @@ import waitForExpect from 'wait-for-expect';
 import { HumanitecSidebarController } from '../../controllers/HumanitecSidebarController';
 import { ConfigurationRepository } from '../../repos/ConfigurationRepository';
 import { ConfigKey } from '../../domain/ConfigKey';
+import { Environment } from '../../domain/Environment';
+import { loggerChannel } from '../../extension';
 
 const wait = (ms: number) =>
   new Promise<void>(resolve => setTimeout(() => resolve(), ms));
@@ -31,6 +33,8 @@ suite('Extension Test Suite', () => {
   let sandbox: sinon.SinonSandbox;
   let showErrorMessage: sinon.SinonSpy;
 
+  const outputs: string[] = [];
+
   beforeEach(async () => {
     sandbox = sinon.createSandbox();
     showErrorMessage = sandbox
@@ -41,6 +45,11 @@ suite('Extension Test Suite', () => {
           return Promise.resolve(undefined);
         }
       );
+
+    sandbox.stub(loggerChannel, 'appendLine').callsFake((value: string) => {
+      console.log('output', value);
+      outputs.push(value);
+    });
 
     humanitecOrg = readEnv('TEST_HUMANITEC_ORG');
     humanitecToken = readEnv('TEST_HUMANITEC_TOKEN');
@@ -156,5 +165,101 @@ suite('Extension Test Suite', () => {
       10000,
       500
     );
+  });
+
+  suite('resource graph', () => {
+    test('fails without app / env', async () => {
+      await vscode.commands.executeCommand(
+        'humanitec.sidebar.organization_structure.set_in_workspace',
+        new Organization(humanitecOrg, 'test-org')
+      );
+
+      await vscode.commands.executeCommand('humanitec.display_resources_graph');
+
+      await waitForExpect(
+        () => {
+          expect(showErrorMessage).to.have.been.called;
+        },
+        10000,
+        500
+      );
+
+      expect(showErrorMessage).to.have.been.calledWith(
+        'There is no enough context to process the request. Required context is: Application'
+      );
+    });
+
+    // TODO: We might want to improve this case.
+    test('fails with a not existing app / env', async () => {
+      await vscode.commands.executeCommand(
+        'humanitec.sidebar.organization_structure.set_in_workspace',
+        new Environment(
+          'development',
+          'Development',
+          humanitecOrg,
+          'not-found-app'
+        )
+      );
+
+      await vscode.commands.executeCommand('humanitec.display_resources_graph');
+
+      await waitForExpect(
+        () => {
+          expect(showErrorMessage).to.have.been.called;
+        },
+        10000,
+        500
+      );
+
+      expect(showErrorMessage).to.have.been.calledWith(
+        'Unexpected error occurred. Please contact the extension developer'
+      );
+    });
+
+    // TODO: We might want to improve this case.
+    test('fails with a not deployed app / env', async () => {
+      await vscode.commands.executeCommand(
+        'humanitec.sidebar.organization_structure.set_in_workspace',
+        new Environment(
+          'development',
+          'Development',
+          humanitecOrg,
+          'not-deployed'
+        )
+      );
+
+      await vscode.commands.executeCommand('humanitec.display_resources_graph');
+
+      await waitForExpect(
+        () => {
+          expect(showErrorMessage).to.have.been.called;
+        },
+        10000,
+        500
+      );
+
+      expect(showErrorMessage).to.have.been.calledWith(
+        'Environment development has no deployments. Deploy application to development environment first.'
+      );
+    });
+
+    test('works with a deployed app / env', async () => {
+      await vscode.commands.executeCommand(
+        'humanitec.sidebar.organization_structure.set_in_workspace',
+        new Environment('development', 'Development', humanitecOrg, 'deployed')
+      );
+
+      await vscode.commands.executeCommand('humanitec.display_resources_graph');
+
+      await waitForExpect(
+        () => {
+          expect(
+            vscode.window.tabGroups.activeTabGroup.activeTab?.label
+          ).to.equal('Resources Graph');
+        },
+        10000,
+        500
+      );
+    });
   });
 });
