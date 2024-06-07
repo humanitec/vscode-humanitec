@@ -1,10 +1,24 @@
-import { ResourceType, ResourceTypeVariable } from '../domain/ResourceType';
+import {
+  ResourceType,
+  ResourceTypeClass,
+  ResourceTypeVariable,
+} from '../domain/ResourceType';
 import { IHumctlAdapter } from '../adapters/humctl/IHumctlAdapter';
 import { NotFoundError } from '../errors/NotFoundError';
 
 export interface IResourceTypeRepository {
   getAvailable(): Promise<ResourceType[]>;
   get(name: string): Promise<ResourceType>;
+}
+
+interface AvailableResourceTypeOutput {
+  Name: string;
+  Type: string;
+  Category: string;
+  InputsSchema: any;
+  OutputsSchema: any;
+  // Casting JSON to Map<string, string> doesn't work as expected, that's why it has to be any
+  Classes: any;
 }
 
 export class ResourceTypeRepository implements IResourceTypeRepository {
@@ -16,19 +30,30 @@ export class ResourceTypeRepository implements IResourceTypeRepository {
       'available-resource-types',
     ]);
 
-    const rawResourceTypes = JSON.parse(result.stdout);
-    const rawResourceType = rawResourceTypes.find(
-      (rawResourceType: any) => rawResourceType['Type'] === type
+    const resourceTypes = JSON.parse(
+      result.stdout
+    ) as AvailableResourceTypeOutput[];
+    const resourceType = resourceTypes.find(
+      rawResourceType => rawResourceType.Type === type
     );
-    if (!rawResourceType) {
+    if (!resourceType) {
       throw new NotFoundError();
     }
+
+    const resourceTypeClasses: ResourceTypeClass[] = [];
+    for (const key in resourceType.Classes) {
+      resourceTypeClasses.push(
+        new ResourceTypeClass(key, resourceType.Classes[key])
+      );
+    }
+
     return new ResourceType(
-      rawResourceType['Category'],
-      rawResourceType['Name'],
-      rawResourceType['Type'],
-      this.resolveVariables(rawResourceType['InputsSchema']),
-      this.resolveVariables(rawResourceType['OutputsSchema'])
+      resourceType.Category,
+      resourceType.Name,
+      resourceType.Type,
+      this.resolveVariables(resourceType.InputsSchema),
+      this.resolveVariables(resourceType.OutputsSchema),
+      resourceTypeClasses
     );
   }
 
@@ -39,14 +64,24 @@ export class ResourceTypeRepository implements IResourceTypeRepository {
     ]);
     const resourceTypes: ResourceType[] = [];
 
-    const rawResourceTypes = JSON.parse(result.stdout);
-    rawResourceTypes.forEach((rawResourceType: any) => {
+    const availableResourceTypes = JSON.parse(
+      result.stdout
+    ) as AvailableResourceTypeOutput[];
+    availableResourceTypes.forEach(availableResourceType => {
+      const resourceTypeClasses: ResourceTypeClass[] = [];
+      for (const key in availableResourceType.Classes) {
+        resourceTypeClasses.push(
+          new ResourceTypeClass(key, availableResourceType.Classes[key])
+        );
+      }
+
       const resourceType = new ResourceType(
-        rawResourceType['Category'],
-        rawResourceType['Name'],
-        rawResourceType['Type'],
-        this.resolveVariables(rawResourceType['InputsSchema']),
-        this.resolveVariables(rawResourceType['OutputsSchema'])
+        availableResourceType.Category,
+        availableResourceType.Name,
+        availableResourceType.Type,
+        this.resolveVariables(availableResourceType.InputsSchema),
+        this.resolveVariables(availableResourceType.OutputsSchema),
+        resourceTypeClasses
       );
       resourceTypes.push(resourceType);
     });

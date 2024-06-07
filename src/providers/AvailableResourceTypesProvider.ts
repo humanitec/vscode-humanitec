@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { ResourceType, ResourceTypeVariable } from '../domain/ResourceType';
+import { ResourceTypeVariable } from '../domain/ResourceType';
 import { IResourceTypeRepository } from '../repos/ResourceTypeRepository';
 
 export class AvailableResourceTypesProvider
@@ -8,49 +8,61 @@ export class AvailableResourceTypesProvider
   constructor(private resourceTypeRepository: IResourceTypeRepository) {}
 
   getTreeItem(element: AvailableResourceTypesTreeItem): vscode.TreeItem {
-    if (element instanceof ResourceType) {
-      return new ResourceTypeTreeItem(element.type, element.name);
-    } else if (element instanceof AvailableResourceTypesIO) {
-      return new ResourceTypeTreeItemIO(element.name);
-    } else {
-      return new ResourceTypeTreeItemIOValue(
-        element.name,
-        element.variable.type
-      );
-    }
+    return element;
   }
 
   getChildren(
     element: AvailableResourceTypesTreeItem
   ): Thenable<AvailableResourceTypesTreeItem[]> {
     if (element === undefined) {
-      return this.resourceTypeRepository.getAvailable().then(resourceTypes => {
-        return Promise.resolve(resourceTypes);
-      });
-    } else if (element instanceof ResourceType) {
+      return this.resourceTypeRepository.getAvailable().then(resourceTypes =>
+        Promise.resolve(
+          resourceTypes.map(resourceType => {
+            return new ResourceTypeTreeItem(
+              resourceType.type,
+              resourceType.name
+            );
+          })
+        )
+      );
+    } else if (element instanceof ResourceTypeTreeItem) {
       return Promise.resolve([
-        new AvailableResourceTypesIO('inputs', element.type),
-        new AvailableResourceTypesIO('outputs', element.type),
+        new ResourceTypePropertyTreeItem('inputs', element.resourceType),
+        new ResourceTypePropertyTreeItem('outputs', element.resourceType),
+        new ResourceTypePropertyTreeItem('classes', element.resourceType),
       ]);
-    } else if (element instanceof AvailableResourceTypesIO) {
+    } else if (element instanceof ResourceTypePropertyTreeItem) {
       return this.resourceTypeRepository
         .get(element.resourceType)
         .then(resourceType => {
-          const result: ResourceTypeVariableWithName[] = [];
-          if (element.name === 'inputs') {
+          const vars: ResourceTypePropertyValueTreeItem[] = [];
+          if (element.property === 'inputs') {
             resourceType.inputs.forEach(
               (value: ResourceTypeVariable, key: string) => {
-                result.push(new ResourceTypeVariableWithName(key, value));
+                vars.push(
+                  new ResourceTypePropertyValueTreeItem(key, value.description)
+                );
+              }
+            );
+          } else if (element.property === 'outputs') {
+            resourceType.outputs.forEach(
+              (value: ResourceTypeVariable, key: string) => {
+                vars.push(
+                  new ResourceTypePropertyValueTreeItem(key, value.description)
+                );
               }
             );
           } else {
-            resourceType.outputs.forEach(
-              (value: ResourceTypeVariable, key: string) => {
-                result.push(new ResourceTypeVariableWithName(key, value));
-              }
-            );
+            resourceType.classes.forEach(resourceTypeClass => {
+              vars.push(
+                new ResourceTypePropertyValueTreeItem(
+                  resourceTypeClass.id,
+                  resourceTypeClass.description
+                )
+              );
+            });
           }
-          return Promise.resolve(result);
+          return Promise.resolve(vars);
         });
     }
     return Promise.resolve([]);
@@ -71,43 +83,35 @@ export class AvailableResourceTypesProvider
 }
 
 export type AvailableResourceTypesTreeItem =
-  | ResourceType
-  | AvailableResourceTypesIO
-  | ResourceTypeVariableWithName;
-
-class AvailableResourceTypesIO {
-  constructor(
-    public readonly name: string,
-    public readonly resourceType: string
-  ) {}
-}
-
-class ResourceTypeVariableWithName {
-  constructor(
-    public readonly name: string,
-    public readonly variable: ResourceTypeVariable
-  ) {}
-}
+  | ResourceTypeTreeItem
+  | ResourceTypePropertyTreeItem
+  | ResourceTypePropertyValueTreeItem;
 
 class ResourceTypeTreeItem extends vscode.TreeItem {
-  constructor(label: string, description: string) {
-    super(label);
-    this.description = description;
+  constructor(
+    public readonly resourceType: string,
+    public readonly name: string
+  ) {
+    super(resourceType);
+    this.description = name;
     this.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
     this.contextValue = 'resource_type';
   }
 }
 
-class ResourceTypeTreeItemIO extends vscode.TreeItem {
-  constructor(label: string) {
-    super(label);
+class ResourceTypePropertyTreeItem extends vscode.TreeItem {
+  constructor(
+    public readonly property: string,
+    public readonly resourceType: string
+  ) {
+    super(property);
     this.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
   }
 }
 
-class ResourceTypeTreeItemIOValue extends vscode.TreeItem {
-  constructor(label: string, description: string) {
-    super(label);
+class ResourceTypePropertyValueTreeItem extends vscode.TreeItem {
+  constructor(value: string, description: string) {
+    super(value);
     this.description = description;
     this.collapsibleState = vscode.TreeItemCollapsibleState.None;
   }
