@@ -16,7 +16,7 @@ export default defineConfig([
       timeout: 20000,
       asyncOnly: true,
     },
-    launchArgs: [`--user-data-dir=${userDir}`],
+    launchArgs: [`--user-data-dir=${userDir}`, '--disable-extensions'],
   },
   // you can specify additional test configurations, too
 ]);

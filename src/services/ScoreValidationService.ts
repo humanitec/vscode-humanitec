@@ -1,7 +1,7 @@
 import { IHumctlAdapter } from '../adapters/humctl/IHumctlAdapter';
 
 export interface IScoreValidationService {
-  validate(filepath: string): Promise<ValidationError[]>;
+  validate(filepath: string, onlyLocal: boolean): Promise<ValidationError[]>;
 }
 
 export class ValidationError {
@@ -25,8 +25,17 @@ interface RawValidationError {
 export class ScoreValidationService implements IScoreValidationService {
   constructor(private humctl: IHumctlAdapter) {}
 
-  async validate(filepath: string): Promise<ValidationError[]> {
-    const result = await this.humctl.execute(['score', 'validate', filepath]);
+  async validate(
+    filepath: string,
+    onlyLocal: boolean
+  ): Promise<ValidationError[]> {
+    const command = ['score', 'validate'];
+    if (onlyLocal) {
+      command.push('--local');
+    }
+    command.push(filepath);
+
+    const result = await this.humctl.execute(command);
 
     const validationErrors: ValidationError[] = [];
     // TODO: Make the handling better

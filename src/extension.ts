@@ -24,7 +24,7 @@ export const loggerChannel = vscode.window.createOutputChannel('Humanitec');
 export async function activate(context: vscode.ExtensionContext) {
   const logger = new LoggerService(loggerChannel);
   const configurationRepository = new ConfigurationRepository();
-  const secretRepository = new SecretRepository(context.secrets, logger);
+  const secretRepository = new SecretRepository();
   const humctl = new HumctlAdapter(
     configurationRepository,
     secretRepository,
@@ -52,6 +52,7 @@ export async function activate(context: vscode.ExtensionContext) {
   ValidateScoreFileController.register(
     context,
     new ScoreValidationService(humctl),
+    configurationRepository,
     logger
   );
   InitializeScoreFileController.register(
