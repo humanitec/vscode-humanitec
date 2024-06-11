@@ -4,7 +4,7 @@
   "publisher": "humanitec",
   "description": "This extension is designed to enhance your experience when working with the Humanitec Platform Orchestrator directly from Visual Studio Code. It provides a set of features to simplify your workflow, making it easier to manage your applications, components, and configurations.",
   "icon": "media/humanitec_logo.png",
-  "version": "0.1.1",
+  "version": "0.0.0",
   "engines": {
     "vscode": "^1.87.0"
   },
@@ -165,7 +165,6 @@
     "test": "vscode-test",
     "prettier": "npx prettier . --write",
     "package": "vsce package",
-    "deploy": "vsce publish",
     "prepare": "husky"
   },
   "lint-staged": {
