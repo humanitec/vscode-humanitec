@@ -10,6 +10,8 @@ import {
 } from 'vscode';
 import { isHumanitecExtensionError } from '../errors/IHumanitecExtensionError';
 import { ILoggerService } from '../services/LoggerService';
+import { IConfigurationRepository } from '../repos/ConfigurationRepository';
+import { ConfigKey } from '../domain/ConfigKey';
 
 export class ValidateScoreFileController {
   private static instance: ValidateScoreFileController;
@@ -18,7 +20,7 @@ export class ValidateScoreFileController {
 
   private constructor(
     private validationService: IScoreValidationService,
-    private logger: ILoggerService
+    private config: IConfigurationRepository
   ) {
     this.diagnosticCollections = new Map();
   }
@@ -26,12 +28,13 @@ export class ValidateScoreFileController {
   static register(
     context: vscode.ExtensionContext,
     validationService: IScoreValidationService,
+    config: IConfigurationRepository,
     logger: ILoggerService
   ) {
     if (this.instance === undefined) {
       this.instance = new ValidateScoreFileController(
         validationService,
-        logger
+        config
       );
     }
 
@@ -51,7 +54,11 @@ export class ValidateScoreFileController {
             if (this.instance.isScoreFile(textDocument)) {
               const diagnosticCollection =
                 this.instance.getDiagnosticCollections(textDocument.uri.path);
-              await this.instance.validate(textDocument, diagnosticCollection);
+              await this.instance.validate(
+                textDocument,
+                diagnosticCollection,
+                context
+              );
             }
           } catch (error) {
             if (isHumanitecExtensionError(error)) {
@@ -81,7 +88,11 @@ export class ValidateScoreFileController {
             const diagnosticCollection = this.instance.getDiagnosticCollections(
               textDocument.uri.path
             );
-            await this.instance.validate(textDocument, diagnosticCollection);
+            await this.instance.validate(
+              textDocument,
+              diagnosticCollection,
+              context
+            );
           }
         } catch (error) {
           logger.error(JSON.stringify({ error }));
@@ -107,7 +118,11 @@ export class ValidateScoreFileController {
           const diagnosticCollection = this.instance.getDiagnosticCollections(
             event.document.uri.path
           );
-          await this.instance.validate(event.document, diagnosticCollection);
+          await this.instance.validate(
+            event.document,
+            diagnosticCollection,
+            context
+          );
         }
       } catch (error) {
         logger.error(JSON.stringify({ error }));
@@ -152,12 +167,35 @@ export class ValidateScoreFileController {
     }
   }
 
+  private statusBarItem: vscode.StatusBarItem | undefined;
+
   private async validate(
     textDocument: TextDocument,
-    diagnosticCollection: vscode.DiagnosticCollection
+    diagnosticCollection: vscode.DiagnosticCollection,
+    context: vscode.ExtensionContext
   ) {
+    if (this.statusBarItem == undefined) {
+      this.statusBarItem = vscode.window.createStatusBarItem(
+        vscode.StatusBarAlignment.Right
+      );
+      this.statusBarItem.text = '$(warning) Only local validation';
+      this.statusBarItem.tooltip =
+        'There is no organization set so Humanitec Extension could only validate the Score files locally';
+      context.subscriptions.push(this.statusBarItem);
+    }
+
+    const isOrganizationSet =
+      (await this.config.get(ConfigKey.HUMANITEC_ORG)) !== '';
+
+    if (!isOrganizationSet) {
+      this.statusBarItem.show();
+    } else {
+      this.statusBarItem.hide();
+    }
+
     const validationErrors = await this.validationService.validate(
-      textDocument.uri.path
+      textDocument.uri.path,
+      !isOrganizationSet
     );
 
     const diagnostics: Diagnostic[] = [];

@@ -1,10 +1,8 @@
-import * as vscode from 'vscode';
 import { SecretKey } from '../domain/SecretKey';
 import { homedir } from 'os';
 import path from 'path';
 import { readFileSync, writeFileSync } from 'fs';
 import { parse, stringify } from 'yaml';
-import { ILoggerService } from '../services/LoggerService';
 
 export interface ISecretRepository {
   get(key: SecretKey): Promise<string>;
@@ -12,10 +10,7 @@ export interface ISecretRepository {
 }
 
 export class SecretRepository implements ISecretRepository {
-  constructor(
-    private secrets: vscode.SecretStorage,
-    private logger: ILoggerService
-  ) {}
+  constructor() {}
 
   async set(key: SecretKey, value: string): Promise<void> {
     const configPath = path.join(homedir(), '.humctl');

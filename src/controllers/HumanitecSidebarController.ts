@@ -144,6 +144,7 @@ export class HumanitecSidebarController {
                 item.id
               );
             }
+            vscode.commands.executeCommand('humanitec.score.validate');
           } else if (item instanceof Application) {
             await configurationRepository.set(ConfigKey.HUMANITEC_ENV, '');
             const orgId = await configurationRepository.get(
