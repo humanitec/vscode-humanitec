@@ -5,6 +5,15 @@ export interface IOrganizationRepository {
   getAll(): Promise<Organization[]>;
 }
 
+interface RawOrganization {
+  metadata: {
+    id: string;
+  };
+  entity: {
+    name: string;
+  };
+}
+
 export class OrganizationRepository implements IOrganizationRepository {
   constructor(private humctl: IHumctlAdapter) {}
 
@@ -13,7 +22,7 @@ export class OrganizationRepository implements IOrganizationRepository {
     const organizations: Organization[] = [];
 
     const rawOrganizations = JSON.parse(result.stdout);
-    rawOrganizations.forEach((rawOrganization: any) => {
+    rawOrganizations.forEach((rawOrganization: RawOrganization) => {
       const organization = new Organization(
         rawOrganization['metadata']['id'],
         rawOrganization['entity']['name']

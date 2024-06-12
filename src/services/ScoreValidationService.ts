@@ -16,6 +16,12 @@ export class ValidationError {
   }
 }
 
+interface RawValidationError {
+  Level: string;
+  Location: string;
+  Message: string;
+}
+
 export class ScoreValidationService implements IScoreValidationService {
   constructor(private humctl: IHumctlAdapter) {}
 
@@ -28,7 +34,7 @@ export class ScoreValidationService implements IScoreValidationService {
       return validationErrors;
     }
     const validationRawErrors = JSON.parse(result.stdout);
-    validationRawErrors.forEach((validationRawError: any) => {
+    validationRawErrors.forEach((validationRawError: RawValidationError) => {
       validationErrors.push(
         new ValidationError(
           validationRawError.Level,

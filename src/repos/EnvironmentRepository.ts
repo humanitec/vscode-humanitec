@@ -8,6 +8,15 @@ export interface IEnvironmentRepository {
   ): Promise<Environment[]>;
 }
 
+interface RawEnvironment {
+  metadata: {
+    id: string;
+  };
+  entity: {
+    name: string;
+  };
+}
+
 export class EnvironmentRepository implements IEnvironmentRepository {
   constructor(private humctl: IHumctlAdapter) {}
 
@@ -26,7 +35,7 @@ export class EnvironmentRepository implements IEnvironmentRepository {
     const environments: Environment[] = [];
 
     const rawEnvironments = JSON.parse(result.stdout);
-    rawEnvironments.forEach((rawEnvironment: any) => {
+    rawEnvironments.forEach((rawEnvironment: RawEnvironment) => {
       const environment = new Environment(
         rawEnvironment['metadata']['id'],
         rawEnvironment['entity']['name'],

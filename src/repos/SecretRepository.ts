@@ -22,9 +22,13 @@ export class SecretRepository implements ISecretRepository {
     let configFile: Buffer = Buffer.from([]);
     try {
       configFile = readFileSync(configPath);
-    } catch (error: any) {
-      if (error.code && error.code === 'ENOENT') {
-        console.log(error);
+    } catch (error: unknown) {
+      if (
+        error instanceof Error &&
+        'code' in error &&
+        error.code === 'ENOENT'
+      ) {
+        // Ignore
       } else {
         throw error;
       }
@@ -51,8 +55,12 @@ export class SecretRepository implements ISecretRepository {
         value = '';
       }
       return value;
-    } catch (error: any) {
-      if (error.code && error.code === 'ENOENT') {
+    } catch (error: unknown) {
+      if (
+        error instanceof Error &&
+        'code' in error &&
+        error.code === 'ENOENT'
+      ) {
         return '';
       } else {
         throw error;
