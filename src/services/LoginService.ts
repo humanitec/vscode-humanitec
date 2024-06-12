@@ -8,6 +8,16 @@ export interface ILoginService {
   confirmDeviceAuthorization(info: DeviceAuthorizationInfo): Promise<string>;
 }
 
+interface DeviceResponse {
+  security_code: string;
+  verification_url: string;
+}
+
+interface DevicePollResponse {
+  accepted: boolean;
+  access_token: string;
+}
+
 export class LoginService implements ILoginService {
   constructor() {}
   async initDeviceAuthorization(): Promise<DeviceAuthorizationInfo> {
@@ -22,7 +32,7 @@ export class LoginService implements ILoginService {
     if (response.status !== 200) {
       throw new AuthorizationError(await response.text());
     }
-    const body: any = await response.json();
+    const body = (await response.json()) as DeviceResponse;
     if (!body.security_code || !body.verification_url) {
       throw new AuthorizationError(await response.text());
     }
@@ -47,7 +57,7 @@ export class LoginService implements ILoginService {
         }
       );
       if (response.status === 200) {
-        const body: any = await response.json();
+        const body = (await response.json()) as DevicePollResponse;
         if (!body.accepted) {
           throw new AuthorizationError(await response.text());
         }

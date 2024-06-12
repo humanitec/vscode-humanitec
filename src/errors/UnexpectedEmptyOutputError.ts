@@ -4,7 +4,7 @@ export class UnexpectedEmptyOutputError implements IHumanitecExtensionError {
   constructor(
     private binaryPath: string,
     private command: string[],
-    private options: any
+    private options: unknown
   ) {}
 
   message(): string {

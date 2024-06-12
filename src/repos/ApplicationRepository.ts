@@ -5,6 +5,15 @@ export interface IApplicationRepository {
   getFrom(organizationId: string): Promise<Application[]>;
 }
 
+interface RawApplication {
+  metadata: {
+    id: string;
+  };
+  entity: {
+    name: string;
+  };
+}
+
 export class ApplicationRepository implements IApplicationRepository {
   constructor(private humctl: IHumctlAdapter) {}
 
@@ -18,7 +27,7 @@ export class ApplicationRepository implements IApplicationRepository {
     const applications: Application[] = [];
 
     const rawApplications = JSON.parse(result.stdout);
-    rawApplications.forEach((rawApplication: any) => {
+    rawApplications.forEach((rawApplication: RawApplication) => {
       const application = new Application(
         rawApplication['metadata']['id'],
         rawApplication['entity']['name'],

@@ -11,14 +11,31 @@ export interface IResourceTypeRepository {
   get(name: string): Promise<ResourceType>;
 }
 
+interface Properties {
+  properties: {
+    [key: string]: {
+      description: string;
+      title: string;
+      type: string;
+    };
+  };
+  required: string[];
+}
+
+interface Schema {
+  properties: {
+    values?: Properties;
+    secrets?: Properties;
+  };
+}
+
 interface AvailableResourceTypeOutput {
   Name: string;
   Type: string;
   Category: string;
-  InputsSchema: any;
-  OutputsSchema: any;
-  // Casting JSON to Map<string, string> doesn't work as expected, that's why it has to be any
-  Classes: any;
+  InputsSchema: Schema;
+  OutputsSchema: Schema;
+  Classes: { [key: string]: string };
 }
 
 export class ResourceTypeRepository implements IResourceTypeRepository {
@@ -51,8 +68,8 @@ export class ResourceTypeRepository implements IResourceTypeRepository {
       resourceType.Category,
       resourceType.Name,
       resourceType.Type,
-      this.resolveVariables(resourceType.InputsSchema),
-      this.resolveVariables(resourceType.OutputsSchema),
+      this.resolveSchema(resourceType.InputsSchema),
+      this.resolveSchema(resourceType.OutputsSchema),
       resourceTypeClasses
     );
   }
@@ -79,8 +96,8 @@ export class ResourceTypeRepository implements IResourceTypeRepository {
         availableResourceType.Category,
         availableResourceType.Name,
         availableResourceType.Type,
-        this.resolveVariables(availableResourceType.InputsSchema),
-        this.resolveVariables(availableResourceType.OutputsSchema),
+        this.resolveSchema(availableResourceType.InputsSchema),
+        this.resolveSchema(availableResourceType.OutputsSchema),
         resourceTypeClasses
       );
       resourceTypes.push(resourceType);
@@ -88,47 +105,57 @@ export class ResourceTypeRepository implements IResourceTypeRepository {
     return resourceTypes;
   }
 
-  private resolveVariables(
-    rawVariables: any
+  private resolveSchema(
+    rawSchema: Schema | null
   ): Map<string, ResourceTypeVariable> {
     const result = new Map<string, ResourceTypeVariable>();
-    if (rawVariables === null) {
+    if (rawSchema === null) {
       return result;
     }
-    const properties = rawVariables['properties'];
+    const properties = rawSchema['properties'];
     if (properties === undefined) {
       return result;
     }
 
-    if ('values' in properties) {
-      const values = this.resolveVariables(properties['values']);
+    if (properties.values) {
+      const values = this.resolveProperties(properties['values']);
       values.forEach((value: ResourceTypeVariable, key: string) => {
         result.set(key, value);
       });
     }
-    if ('secrets' in properties) {
-      const secrets = this.resolveVariables(properties['secrets']);
+    if (properties.secrets) {
+      const secrets = this.resolveProperties(properties['secrets']);
       secrets.forEach((value: ResourceTypeVariable, key: string) => {
         result.set(key, value);
       });
     }
 
-    if (!('values' in properties || 'secrets' in properties)) {
-      let requiredProperties: string[] = rawVariables['required'];
-      if (requiredProperties === undefined) {
-        requiredProperties = [];
-      }
+    return result;
+  }
 
-      let property: keyof typeof properties;
-      for (property in properties) {
-        const variable = new ResourceTypeVariable(
-          properties[property]['description'],
-          properties[property]['title'],
-          properties[property]['type'],
-          requiredProperties.includes(property)
-        );
-        result.set(property, variable);
-      }
+  private resolveProperties(
+    rawVariables: Properties
+  ): Map<string, ResourceTypeVariable> {
+    const result = new Map<string, ResourceTypeVariable>();
+    const properties = rawVariables['properties'];
+    if (properties === undefined) {
+      return result;
+    }
+
+    let requiredProperties: string[] = rawVariables['required'];
+    if (requiredProperties === undefined) {
+      requiredProperties = [];
+    }
+
+    let property: keyof typeof properties;
+    for (property in properties) {
+      const variable = new ResourceTypeVariable(
+        properties[property]['description'],
+        properties[property]['title'],
+        properties[property]['type'],
+        requiredProperties.includes(property)
+      );
+      result.set(property, variable);
     }
 
     return result;

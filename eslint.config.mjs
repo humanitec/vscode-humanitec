@@ -11,10 +11,7 @@ export default tseslint.config(
       ecmaVersion: 2022,
       sourceType: 'module',
     },
-    rules: {
-      // We should not use `any` in our codebase, but there are quite a few violations today.
-      '@typescript-eslint/no-explicit-any': 'warn',
-    },
+    rules: {},
     files: ['src/**/*.ts'],
   },
   {

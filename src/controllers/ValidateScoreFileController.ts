@@ -139,7 +139,7 @@ export class ValidateScoreFileController {
 
   private isScoreFile(textDocument: TextDocument): boolean {
     try {
-      const loadedYamlDocument: any = yaml.load(textDocument.getText());
+      const loadedYamlDocument: unknown = yaml.load(textDocument.getText());
       if (!(loadedYamlDocument instanceof Object)) {
         return false;
       }

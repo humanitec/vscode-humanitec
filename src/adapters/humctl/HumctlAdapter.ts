@@ -1,4 +1,4 @@
-import { execFile } from 'child_process';
+import { execFile, ExecFileException } from 'child_process';
 import * as util from 'util';
 
 import { HumctlResult } from './HumctlResult';
@@ -61,10 +61,18 @@ export class HumctlAdapter implements IHumctlAdapter {
       result = await exec(humctlFilePath, command, {
         env: await this.prepareEnvVars(),
       });
-    } catch (error: any) {
-      statusCode = error.code;
-      result.stderr = error.stderr;
-      result.stdout = error.stdout;
+    } catch (error: unknown) {
+      const execErr = error as ExecFileException;
+
+      if (execErr.code) {
+        if (typeof execErr.code === 'string') {
+          statusCode = parseInt(execErr.code, 10);
+        } else {
+          statusCode = execErr.code;
+        }
+      }
+      result.stderr = execErr.stderr || '';
+      result.stdout = execErr.stdout || '';
     }
 
     // Ensure stderr and stdout is not undefined before its processing

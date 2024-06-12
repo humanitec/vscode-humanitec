@@ -4,7 +4,7 @@ export interface IHumanitecExtensionError {
 }
 
 export function isHumanitecExtensionError(
-  error: any
+  error: unknown
 ): error is IHumanitecExtensionError {
   const isObject = error !== null && typeof error === 'object';
   if (isObject) {
