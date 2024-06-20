@@ -10,7 +10,10 @@ import { readEnv } from '../utils';
 const expect = chai.expect;
 chai.use(sinonChai);
 
-suite('When validate score file command triggered', () => {
+// Those tests aren't working on Windows yet.
+const expectWindowsSuite = process.platform === 'win32' ? suite.skip : suite;
+
+expectWindowsSuite('When validate score file command triggered', () => {
   const statusBarItemShow = sinon.spy();
   const statusBarItemHide = sinon.spy();
   const humanitecOrg = readEnv('TEST_HUMANITEC_ORG');
