@@ -10,7 +10,7 @@ jobs:
   build:
     strategy:
       matrix:
-        os: [macos-latest, ubuntu-latest] # windows-latest should also be tested, but currently fails due to https://github.com/mochajs/mocha/issues/4851
+        os: [macos-latest, ubuntu-latest, windows-latest]
     runs-on: ${{ matrix.os }}
     env:
       TEST_HUMANITEC_TOKEN: ${{ secrets.HUMANITEC_TOKEN }}
@@ -27,6 +27,7 @@ jobs:
       - run: npm ci
 
       - run: npm run lint
+        if: runner.os == 'Linux'
 
       - run: xvfb-run -a npm test
         if: runner.os == 'Linux'

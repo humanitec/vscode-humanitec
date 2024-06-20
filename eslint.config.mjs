@@ -1,6 +1,7 @@
 import eslint from '@eslint/js';
 import tseslint from 'typescript-eslint';
 import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
+import globals from 'globals';
 
 export default tseslint.config(
   eslint.configs.recommended,
@@ -21,6 +22,19 @@ export default tseslint.config(
       '@typescript-eslint/no-unused-expressions': 'off',
     },
     files: ['src/test/**/*.test.ts'],
+  },
+  {
+    name: 'scripts',
+    languageOptions: {
+      globals: {
+        ...globals.node,
+      },
+    },
+    rules: {
+      // scripts are plain js
+      '@typescript-eslint/no-require-imports': 'off',
+    },
+    files: ['scripts/*.js'],
   },
   eslintPluginPrettierRecommended,
   {
