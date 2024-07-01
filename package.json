@@ -194,7 +194,7 @@
     "sinon-chai": "^3.7.0",
     "tar": "^7.4.0",
     "typescript": "^5.5.2",
-    "typescript-eslint": "^8.0.0-alpha.30",
+    "typescript-eslint": "^8.0.0-alpha.38",
     "wait-for-expect": "^3.0.2"
   },
   "dependencies": {
