@@ -201,6 +201,6 @@
     "@vscode/webview-ui-toolkit": "^1.4.0",
     "crypto": "^1.0.1",
     "js-yaml": "^4.1.0",
-    "yaml": "^2.4.5"
+    "yaml": "^2.5.0"
   }
 }
