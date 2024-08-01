@@ -87,7 +87,7 @@ export type AvailableResourceTypesTreeItem =
   | ResourceTypePropertyTreeItem
   | ResourceTypePropertyValueTreeItem;
 
-class ResourceTypeTreeItem extends vscode.TreeItem {
+export class ResourceTypeTreeItem extends vscode.TreeItem {
   constructor(
     public readonly resourceType: string,
     public readonly name: string
