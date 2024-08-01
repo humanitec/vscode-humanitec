@@ -1,7 +1,9 @@
 import * as vscode from 'vscode';
-import { AvailableResourceTypesProvider } from '../providers/AvailableResourceTypesProvider';
+import {
+  AvailableResourceTypesProvider,
+  ResourceTypeTreeItem,
+} from '../providers/AvailableResourceTypesProvider';
 import { IResourceTypeRepository } from '../repos/ResourceTypeRepository';
-import { ResourceType } from '../domain/ResourceType';
 import { ILoggerService } from '../services/LoggerService';
 import { isHumanitecExtensionError } from '../errors/IHumanitecExtensionError';
 import {
@@ -106,7 +108,7 @@ export class HumanitecSidebarController {
 
     disposable = vscode.commands.registerCommand(
       'humanitec.sidebar.availableResources.open_resource_type_doc',
-      async (resourceType: ResourceType) => {
+      async (resourceType: ResourceTypeTreeItem) => {
         try {
           let url = vscode.Uri.parse(
             'https://developer.humanitec.com/platform-orchestrator/reference/resource-types/'
@@ -114,7 +116,7 @@ export class HumanitecSidebarController {
           if (resourceType !== undefined) {
             url = vscode.Uri.parse(
               'https://developer.humanitec.com/platform-orchestrator/reference/resource-types/#' +
-                resourceType.type
+                resourceType.resourceType
             );
           }
           vscode.env.openExternal(url);
