@@ -5,6 +5,7 @@ import {
 } from '../domain/ResourceType';
 import { IHumctlAdapter } from '../adapters/humctl/IHumctlAdapter';
 import { NotFoundError } from '../errors/NotFoundError';
+import { HumctlError } from '../errors/HumctlError';
 
 export interface IResourceTypeRepository {
   getAvailable(): Promise<ResourceType[]>;
@@ -46,6 +47,13 @@ export class ResourceTypeRepository implements IResourceTypeRepository {
       'score',
       'available-resource-types',
     ]);
+    if (result.stderr !== '') {
+      throw new HumctlError(
+        'score available-resource-types',
+        result.stderr,
+        result.exitcode
+      );
+    }
 
     const resourceTypes = JSON.parse(
       result.stdout
@@ -79,6 +87,14 @@ export class ResourceTypeRepository implements IResourceTypeRepository {
       'score',
       'available-resource-types',
     ]);
+    if (result.stderr !== '') {
+      throw new HumctlError(
+        'score available-resource-types',
+        result.stderr,
+        result.exitcode
+      );
+    }
+
     const resourceTypes: ResourceType[] = [];
 
     const availableResourceTypes = JSON.parse(

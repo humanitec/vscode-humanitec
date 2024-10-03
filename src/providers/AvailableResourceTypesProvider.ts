@@ -1,11 +1,15 @@
 import * as vscode from 'vscode';
 import { ResourceTypeVariable } from '../domain/ResourceType';
 import { IResourceTypeRepository } from '../repos/ResourceTypeRepository';
+import { IErrorHandlerService } from '../services/ErrorHandlerService';
 
 export class AvailableResourceTypesProvider
   implements vscode.TreeDataProvider<AvailableResourceTypesTreeItem>
 {
-  constructor(private resourceTypeRepository: IResourceTypeRepository) {}
+  constructor(
+    private resourceTypeRepository: IResourceTypeRepository,
+    private errorHandler: IErrorHandlerService
+  ) {}
 
   getTreeItem(element: AvailableResourceTypesTreeItem): vscode.TreeItem {
     return element;
@@ -15,16 +19,22 @@ export class AvailableResourceTypesProvider
     element: AvailableResourceTypesTreeItem
   ): Thenable<AvailableResourceTypesTreeItem[]> {
     if (element === undefined) {
-      return this.resourceTypeRepository.getAvailable().then(resourceTypes =>
-        Promise.resolve(
-          resourceTypes.map(resourceType => {
-            return new ResourceTypeTreeItem(
-              resourceType.type,
-              resourceType.name
-            );
-          })
+      return this.resourceTypeRepository
+        .getAvailable()
+        .then(resourceTypes =>
+          Promise.resolve(
+            resourceTypes.map(resourceType => {
+              return new ResourceTypeTreeItem(
+                resourceType.type,
+                resourceType.name
+              );
+            })
+          )
         )
-      );
+        .catch(error => {
+          this.errorHandler.handle(error);
+          return [];
+        });
     } else if (element instanceof ResourceTypeTreeItem) {
       return Promise.resolve([
         new ResourceTypePropertyTreeItem('inputs', element.resourceType),
@@ -63,6 +73,10 @@ export class AvailableResourceTypesProvider
             });
           }
           return Promise.resolve(vars);
+        })
+        .catch(error => {
+          this.errorHandler.handle(error);
+          return [];
         });
     }
     return Promise.resolve([]);

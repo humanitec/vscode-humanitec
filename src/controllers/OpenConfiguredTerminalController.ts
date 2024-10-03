@@ -3,8 +3,7 @@ import { IConfigurationRepository } from '../repos/ConfigurationRepository';
 import { ISecretRepository } from '../repos/SecretRepository';
 import { SecretKey } from '../domain/SecretKey';
 import { ConfigKey } from '../domain/ConfigKey';
-import { isHumanitecExtensionError } from '../errors/IHumanitecExtensionError';
-import { ILoggerService } from '../services/LoggerService';
+import { IErrorHandlerService } from '../services/ErrorHandlerService';
 
 export class OpenConfiguredTerminalController {
   private constructor() {}
@@ -13,7 +12,7 @@ export class OpenConfiguredTerminalController {
     context: vscode.ExtensionContext,
     configs: IConfigurationRepository,
     secrets: ISecretRepository,
-    logger: ILoggerService
+    errorHandler: IErrorHandlerService
   ) {
     const disposable = vscode.commands.registerCommand(
       'humanitec.open_configured_terminal',
@@ -38,15 +37,7 @@ export class OpenConfiguredTerminalController {
 
           terminal.show();
         } catch (error) {
-          if (isHumanitecExtensionError(error)) {
-            logger.error(error.details());
-            vscode.window.showErrorMessage(error.message());
-          } else {
-            logger.error(JSON.stringify({ error }));
-            vscode.window.showErrorMessage(
-              'Unexpected error occurred. Please contact the extension developer'
-            );
-          }
+          errorHandler.handle(error);
         }
       }
     );

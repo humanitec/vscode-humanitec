@@ -1,7 +1,6 @@
 import * as vscode from 'vscode';
 import { IResourceDependencyGraphService } from '../services/ResourcesGraphService';
-import { isHumanitecExtensionError } from '../errors/IHumanitecExtensionError';
-import { ILoggerService } from '../services/LoggerService';
+import { IErrorHandlerService } from '../services/ErrorHandlerService';
 
 export class DisplayResourcesGraphController {
   private constructor() {}
@@ -9,7 +8,7 @@ export class DisplayResourcesGraphController {
   static register(
     context: vscode.ExtensionContext,
     resourcesGraphService: IResourceDependencyGraphService,
-    logger: ILoggerService
+    errorHandler: IErrorHandlerService
   ) {
     const disposable = vscode.commands.registerCommand(
       'humanitec.display_resources_graph',
@@ -27,15 +26,7 @@ export class DisplayResourcesGraphController {
           );
           panel.webview.html = this.getWebviewContent(graph);
         } catch (error) {
-          if (isHumanitecExtensionError(error)) {
-            vscode.window.showErrorMessage(error.message());
-            logger.error(error.details());
-          } else {
-            logger.error(JSON.stringify({ error }));
-            vscode.window.showErrorMessage(
-              'Unexpected error occurred. Please contact the extension developer'
-            );
-          }
+          errorHandler.handle(error);
         }
       }
     );

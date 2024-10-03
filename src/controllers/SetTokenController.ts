@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { ISecretRepository } from '../repos/SecretRepository';
 import { SecretKey } from '../domain/SecretKey';
-import { ILoggerService } from '../services/LoggerService';
+import { IErrorHandlerService } from '../services/ErrorHandlerService';
 
 export class SetTokenController {
   private constructor() {}
@@ -9,7 +9,7 @@ export class SetTokenController {
   static register(
     context: vscode.ExtensionContext,
     secrets: ISecretRepository,
-    logger: ILoggerService
+    errorHandler: IErrorHandlerService
   ) {
     const disposable = vscode.commands.registerCommand(
       'humanitec.set_token',
@@ -35,10 +35,7 @@ export class SetTokenController {
             );
           }
         } catch (error) {
-          logger.error(JSON.stringify({ error }));
-          vscode.window.showErrorMessage(
-            'Unexpected error occurred. Please contact the extension developer'
-          );
+          errorHandler.handle(error);
         }
       }
     );

@@ -18,11 +18,13 @@ import { EnvironmentRepository } from './repos/EnvironmentRepository';
 import { HumctlAdapter } from './adapters/humctl/HumctlAdapter';
 import { LoginController } from './controllers/LoginController';
 import { LoginService } from './services/LoginService';
+import { ErrorHandlerService } from './services/ErrorHandlerService';
 
 export const loggerChannel = vscode.window.createOutputChannel('Humanitec');
 
 export async function activate(context: vscode.ExtensionContext) {
   const logger = new LoggerService(loggerChannel);
+  const errorHandler = new ErrorHandlerService(logger, loggerChannel);
   const configurationRepository = new ConfigurationRepository();
   const secretRepository = new SecretRepository();
   const humctl = new HumctlAdapter(
@@ -43,34 +45,37 @@ export async function activate(context: vscode.ExtensionContext) {
     applicationRepository,
     environmentRepository,
     configurationRepository,
-    logger
+    errorHandler
   );
-
-  LoginController.register(context, loginService, secretRepository, logger);
-  SetTokenController.register(context, secretRepository, logger);
-
+  LoginController.register(
+    context,
+    loginService,
+    secretRepository,
+    errorHandler
+  );
+  SetTokenController.register(context, secretRepository, errorHandler);
   ValidateScoreFileController.register(
     context,
     new ScoreValidationService(humctl),
     configurationRepository,
-    logger
+    errorHandler
   );
   InitializeScoreFileController.register(
     context,
     new ScoreInitializationService(humctl),
     false,
-    logger
+    errorHandler
   );
   DisplayResourcesGraphController.register(
     context,
     new ResourcesGraphService(humctl),
-    logger
+    errorHandler
   );
   OpenConfiguredTerminalController.register(
     context,
     configurationRepository,
     secretRepository,
-    logger
+    errorHandler
   );
 
   vscode.commands.executeCommand('humanitec.score.validate');

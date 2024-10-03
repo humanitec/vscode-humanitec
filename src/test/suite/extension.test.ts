@@ -49,6 +49,10 @@ suite('Extension Test Suite', () => {
       throw new Error('Extension not found');
     }
     await ext.activate();
+
+    const humanitecToken = readEnv('TEST_HUMANITEC_TOKEN');
+    sandbox.stub(vscode.window, 'showInputBox').resolves(humanitecToken);
+    await vscode.commands.executeCommand('humanitec.set_token');
   });
 
   afterEach(() => {
@@ -130,7 +134,8 @@ suite('Extension Test Suite', () => {
       );
 
       expect(showErrorMessage).to.have.been.calledWith(
-        'Unexpected error occurred. Please contact the extension developer'
+        'Command: humctl resources graph returned an unexpected error',
+        'Show output log'
       );
     });
 

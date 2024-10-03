@@ -1,4 +1,5 @@
 import { IHumctlAdapter } from '../adapters/humctl/IHumctlAdapter';
+import { HumctlError } from '../errors/HumctlError';
 
 export interface IScoreValidationService {
   validate(filepath: string, onlyLocal: boolean): Promise<ValidationError[]>;
@@ -33,9 +34,24 @@ export class ScoreValidationService implements IScoreValidationService {
     if (onlyLocal) {
       command.push('--local');
     }
+
+    // Windows vscode for some reason adds a "/" in front of the path even though it's windows path which causes humctl to fail
+    const os = process.platform.toString();
+    if (os === 'win32') {
+      if (filepath.startsWith('/')) {
+        filepath = filepath.substring(1);
+      }
+    }
     command.push(filepath);
 
     const result = await this.humctl.execute(command);
+    if (result.stdout === '') {
+      throw new HumctlError(
+        'humctl ' + command.join(' '),
+        result.stderr,
+        result.exitcode
+      );
+    }
 
     const validationErrors: ValidationError[] = [];
     // TODO: Make the handling better

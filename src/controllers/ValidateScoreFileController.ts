@@ -8,10 +8,9 @@ import {
   Range,
   TextDocument,
 } from 'vscode';
-import { isHumanitecExtensionError } from '../errors/IHumanitecExtensionError';
-import { ILoggerService } from '../services/LoggerService';
 import { IConfigurationRepository } from '../repos/ConfigurationRepository';
 import { ConfigKey } from '../domain/ConfigKey';
+import { IErrorHandlerService } from '../services/ErrorHandlerService';
 
 export class ValidateScoreFileController {
   private static instance: ValidateScoreFileController;
@@ -29,7 +28,7 @@ export class ValidateScoreFileController {
     context: vscode.ExtensionContext,
     validationService: IScoreValidationService,
     config: IConfigurationRepository,
-    logger: ILoggerService
+    errorHandler: IErrorHandlerService
   ) {
     if (this.instance === undefined) {
       this.instance = new ValidateScoreFileController(
@@ -61,15 +60,7 @@ export class ValidateScoreFileController {
               );
             }
           } catch (error) {
-            if (isHumanitecExtensionError(error)) {
-              vscode.window.showErrorMessage(error.message());
-              logger.error(error.details());
-            } else {
-              vscode.window.showErrorMessage(
-                'Unexpected error occurred. Please contact the extension developer'
-              );
-              logger.error(JSON.stringify({ error }));
-            }
+            errorHandler.handle(error);
           }
         });
       }
@@ -95,7 +86,7 @@ export class ValidateScoreFileController {
             );
           }
         } catch (error) {
-          logger.error(JSON.stringify({ error }));
+          errorHandler.handle(error);
         }
       });
     });
@@ -125,7 +116,7 @@ export class ValidateScoreFileController {
           );
         }
       } catch (error) {
-        logger.error(JSON.stringify({ error }));
+        errorHandler.handle(error);
       }
     });
     context.subscriptions.push(disposable);

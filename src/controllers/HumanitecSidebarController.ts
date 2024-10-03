@@ -4,8 +4,6 @@ import {
   ResourceTypeTreeItem,
 } from '../providers/AvailableResourceTypesProvider';
 import { IResourceTypeRepository } from '../repos/ResourceTypeRepository';
-import { ILoggerService } from '../services/LoggerService';
-import { isHumanitecExtensionError } from '../errors/IHumanitecExtensionError';
 import {
   OrganizationStructureItem,
   OrganizationStructureProvider,
@@ -18,6 +16,7 @@ import { Organization } from '../domain/Organization';
 import { ConfigKey } from '../domain/ConfigKey';
 import { Application } from '../domain/Application';
 import { ControllerIsAlreadyRegisteredError } from '../errors/ControllerIsAlreadyRegisteredError';
+import { IErrorHandlerService } from '../services/ErrorHandlerService';
 
 export class HumanitecSidebarController {
   private static instance: HumanitecSidebarController;
@@ -34,7 +33,7 @@ export class HumanitecSidebarController {
     applicationRepository: IApplicationRepository,
     environmentRepository: IEnvironmentRepository,
     configurationRepository: IConfigurationRepository,
-    logger: ILoggerService
+    errorHandler: IErrorHandlerService
   ) {
     if (this.instance !== undefined) {
       throw new ControllerIsAlreadyRegisteredError(
@@ -43,13 +42,15 @@ export class HumanitecSidebarController {
     }
 
     const availableResourceTypesProvider = new AvailableResourceTypesProvider(
-      resourceTypeRepository
+      resourceTypeRepository,
+      errorHandler
     );
     const organizationStructureProvider = new OrganizationStructureProvider(
       organizationRepository,
       applicationRepository,
       environmentRepository,
-      configurationRepository
+      configurationRepository,
+      errorHandler
     );
     this.instance = new HumanitecSidebarController(
       availableResourceTypesProvider,
@@ -72,15 +73,7 @@ export class HumanitecSidebarController {
         try {
           availableResourceTypesProvider.refresh();
         } catch (error) {
-          if (isHumanitecExtensionError(error)) {
-            logger.error(error.details());
-            vscode.window.showErrorMessage(error.message());
-          } else {
-            logger.error(JSON.stringify({ error }));
-            vscode.window.showErrorMessage(
-              'Unexpected error occurred. Please contact the extension developer'
-            );
-          }
+          errorHandler.handle(error);
         }
       }
     );
@@ -92,15 +85,7 @@ export class HumanitecSidebarController {
         try {
           organizationStructureProvider.refresh();
         } catch (error) {
-          if (isHumanitecExtensionError(error)) {
-            logger.error(error.details());
-            vscode.window.showErrorMessage(error.message());
-          } else {
-            logger.error(JSON.stringify({ error }));
-            vscode.window.showErrorMessage(
-              'Unexpected error occurred. Please contact the extension developer'
-            );
-          }
+          errorHandler.handle(error);
         }
       }
     );
@@ -121,10 +106,7 @@ export class HumanitecSidebarController {
           }
           vscode.env.openExternal(url);
         } catch (error) {
-          logger.error(JSON.stringify({ error }));
-          vscode.window.showErrorMessage(
-            'Unexpected error occurred. Please contact the extension developer'
-          );
+          errorHandler.handle(error);
         }
       }
     );
@@ -179,10 +161,7 @@ export class HumanitecSidebarController {
           await availableResourceTypesProvider.refresh();
           await organizationStructureProvider.refresh();
         } catch (error) {
-          logger.error(JSON.stringify({ error }));
-          vscode.window.showErrorMessage(
-            'Unexpected error occurred. Please contact the extension developer'
-          );
+          errorHandler.handle(error);
         }
       }
     );

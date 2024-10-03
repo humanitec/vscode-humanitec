@@ -1,5 +1,6 @@
 import { IHumctlAdapter } from '../adapters/humctl/IHumctlAdapter';
 import { Application } from '../domain/Application';
+import { HumctlError } from '../errors/HumctlError';
 
 export interface IApplicationRepository {
   getFrom(organizationId: string): Promise<Application[]>;
@@ -24,6 +25,14 @@ export class ApplicationRepository implements IApplicationRepository {
       'get',
       'apps',
     ]);
+    if (result.stderr !== '') {
+      throw new HumctlError(
+        'humctl --org ' + organizationId + ' get apps',
+        result.stderr,
+        result.exitcode
+      );
+    }
+
     const applications: Application[] = [];
 
     const rawApplications = JSON.parse(result.stdout);
