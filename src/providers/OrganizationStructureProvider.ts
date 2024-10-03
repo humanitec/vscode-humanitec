@@ -8,6 +8,7 @@ import { IEnvironmentRepository } from '../repos/EnvironmentRepository';
 import { IConfigurationRepository } from '../repos/ConfigurationRepository';
 import { ConfigKey } from '../domain/ConfigKey';
 import path from 'path';
+import { IErrorHandlerService } from '../services/ErrorHandlerService';
 
 export class OrganizationStructureProvider
   implements vscode.TreeDataProvider<OrganizationStructureItem>
@@ -16,7 +17,8 @@ export class OrganizationStructureProvider
     private organizationRepository: IOrganizationRepository,
     private applicationRepository: IApplicationRepository,
     private environmentRepository: IEnvironmentRepository,
-    private configurationRepository: IConfigurationRepository
+    private configurationRepository: IConfigurationRepository,
+    private errorHandler: IErrorHandlerService
   ) {}
 
   getTreeItem(
@@ -70,15 +72,25 @@ export class OrganizationStructureProvider
     element?: OrganizationStructureItem | undefined
   ): vscode.ProviderResult<OrganizationStructureItem[]> {
     if (element === undefined) {
-      return this.organizationRepository.getAll().then(organizations => {
-        return Promise.resolve(organizations);
-      });
+      return this.organizationRepository
+        .getAll()
+        .then(organizations => {
+          return Promise.resolve(organizations);
+        })
+        .catch(error => {
+          this.errorHandler.handle(error);
+          return [];
+        });
     }
     if (element instanceof Organization) {
       return this.applicationRepository
         .getFrom(element.id)
         .then(applications => {
           return Promise.resolve(applications);
+        })
+        .catch(error => {
+          this.errorHandler.handle(error);
+          return [];
         });
     }
     if (element instanceof Application) {
@@ -86,6 +98,10 @@ export class OrganizationStructureProvider
         .getFrom(element.organizationId, element.id)
         .then(environments => {
           return Promise.resolve(environments);
+        })
+        .catch(error => {
+          this.errorHandler.handle(error);
+          return [];
         });
     }
     return Promise.resolve([]);

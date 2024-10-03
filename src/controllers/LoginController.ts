@@ -1,9 +1,8 @@
 import * as vscode from 'vscode';
 import { ISecretRepository } from '../repos/SecretRepository';
 import { SecretKey } from '../domain/SecretKey';
-import { ILoggerService } from '../services/LoggerService';
 import { ILoginService } from '../services/LoginService';
-import { isHumanitecExtensionError } from '../errors/IHumanitecExtensionError';
+import { IErrorHandlerService } from '../services/ErrorHandlerService';
 
 export class LoginController {
   private constructor() {}
@@ -12,7 +11,7 @@ export class LoginController {
     context: vscode.ExtensionContext,
     loginService: ILoginService,
     secrets: ISecretRepository,
-    logger: ILoggerService
+    errorHandler: IErrorHandlerService
   ) {
     const disposable = vscode.commands.registerCommand(
       'humanitec.login',
@@ -51,15 +50,7 @@ export class LoginController {
                 'Humanitec extension successfully configured!'
               );
             } catch (error) {
-              if (isHumanitecExtensionError(error)) {
-                vscode.window.showErrorMessage(error.message());
-                logger.error(error.details());
-              } else {
-                vscode.window.showErrorMessage(
-                  'Unexpected error occurred. Please contact the extension developer'
-                );
-                logger.error(JSON.stringify({ error }));
-              }
+              errorHandler.handle(error);
             }
           }
         );

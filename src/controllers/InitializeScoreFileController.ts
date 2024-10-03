@@ -1,7 +1,6 @@
 import * as vscode from 'vscode';
 import { IScoreInitializationService } from '../services/ScoreInitializationService';
-import { ILoggerService } from '../services/LoggerService';
-import { isHumanitecExtensionError } from '../errors/IHumanitecExtensionError';
+import { IErrorHandlerService } from '../services/ErrorHandlerService';
 
 export class InitializeScoreFileController {
   private constructor() {}
@@ -10,7 +9,7 @@ export class InitializeScoreFileController {
     context: vscode.ExtensionContext,
     initializationService: IScoreInitializationService,
     enable: boolean,
-    logger: ILoggerService
+    errorHandler: IErrorHandlerService
   ) {
     const disposable = vscode.commands.registerCommand(
       'humanitec.score.init',
@@ -43,15 +42,7 @@ export class InitializeScoreFileController {
             vscode.window.showInformationMessage('No workspace is opened');
           }
         } catch (error) {
-          if (isHumanitecExtensionError(error)) {
-            logger.error(error.details());
-            vscode.window.showErrorMessage(error.message());
-          } else {
-            logger.error(JSON.stringify({ error }));
-            vscode.window.showErrorMessage(
-              'Unexpected error occurred. Please contact the extension developer'
-            );
-          }
+          errorHandler.handle(error);
         }
       }
     );

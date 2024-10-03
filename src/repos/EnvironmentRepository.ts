@@ -1,5 +1,6 @@
 import { IHumctlAdapter } from '../adapters/humctl/IHumctlAdapter';
 import { Environment } from '../domain/Environment';
+import { HumctlError } from '../errors/HumctlError';
 
 export interface IEnvironmentRepository {
   getFrom(
@@ -32,6 +33,18 @@ export class EnvironmentRepository implements IEnvironmentRepository {
       'get',
       'envs',
     ]);
+    if (result.stderr !== '') {
+      throw new HumctlError(
+        'humctl --org ' +
+          organizationId +
+          ' --app ' +
+          applicationId +
+          ' get envs',
+        result.stderr,
+        result.exitcode
+      );
+    }
+
     const environments: Environment[] = [];
 
     const rawEnvironments = JSON.parse(result.stdout);
