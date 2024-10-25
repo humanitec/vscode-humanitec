@@ -17,6 +17,11 @@ export class ErrorHandlerService implements IErrorHandlerService {
       this.logger.error(error.details());
       this.showErrorMessage(error.message());
     } else if (error instanceof Error) {
+      // Validation may fail if the document changed (object is already disposed) during the validation process
+      if (error.message === 'illegal state - object is disposed') {
+        return;
+      }
+
       this.logger.error(
         JSON.stringify({
           message: error.message,
