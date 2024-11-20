@@ -24,6 +24,13 @@ jobs:
         with:
           node-version: 18.x
 
+      - name: Authenticate with private NPM package
+        run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
+
+      - name: Build graph webview
+        working-directory: ./webview/resource-dependency-graph
+        run: npm ci
+
       - run: npm ci
 
       - run: npm run lint
