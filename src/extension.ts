@@ -9,7 +9,6 @@ import { ResourceTypeRepository } from './repos/ResourceTypeRepository';
 import { InitializeScoreFileController } from './controllers/InitializeScoreFileController';
 import { ScoreInitializationService } from './services/ScoreInitializationService';
 import { DisplayResourcesGraphController } from './controllers/DisplayResourceDependencyGraphController';
-import { ResourcesGraphService } from './services/ResourcesGraphService';
 import { OpenConfiguredTerminalController } from './controllers/OpenConfiguredTerminalController';
 import { LoggerService } from './services/LoggerService';
 import { OrganizationRepository } from './repos/OrganizationRepository';
@@ -19,6 +18,10 @@ import { HumctlAdapter } from './adapters/humctl/HumctlAdapter';
 import { LoginController } from './controllers/LoginController';
 import { LoginService } from './services/LoginService';
 import { ErrorHandlerService } from './services/ErrorHandlerService';
+import { DeploymentRepository } from './repos/DeploymentRepository';
+import { ActiveResourcesRepository } from './repos/ActiveResourcesRepository';
+import { DependencyGraphRepository } from './repos/DependencyGraphRepository';
+import { ResourceDefinitionRepository } from './repos/ResourceDefinitionRepository';
 
 export const loggerChannel = vscode.window.createOutputChannel('Humanitec');
 
@@ -32,6 +35,10 @@ export async function activate(context: vscode.ExtensionContext) {
     secretRepository,
     context
   );
+  const activeResourcesRepository = new ActiveResourcesRepository(humctl);
+  const dependencyGraphRepository = new DependencyGraphRepository(humctl);
+  const deploymentRepository = new DeploymentRepository(humctl);
+  const resourceDefinitionRepository = new ResourceDefinitionRepository(humctl);
   const resourceTypeRepository = new ResourceTypeRepository(humctl);
   const organizationRepository = new OrganizationRepository(humctl);
   const applicationRepository = new ApplicationRepository(humctl);
@@ -68,7 +75,13 @@ export async function activate(context: vscode.ExtensionContext) {
   );
   DisplayResourcesGraphController.register(
     context,
-    new ResourcesGraphService(humctl),
+    activeResourcesRepository,
+    dependencyGraphRepository,
+    deploymentRepository,
+    resourceDefinitionRepository,
+    resourceTypeRepository,
+    environmentRepository,
+    configurationRepository,
     errorHandler
   );
   OpenConfiguredTerminalController.register(

@@ -88,11 +88,20 @@ export class HumctlAdapter implements IHumctlAdapter {
       result.stderr.includes('HTTP-403')
     ) {
       throw new UnauthorizedError();
-    } else if (result.stderr.includes('environment is required')) {
+    } else if (
+      result.stderr.includes('environment is required') ||
+      result.stderr.includes('missing env')
+    ) {
       throw new NotEnoughContextError(HumanitecContext.ENV);
-    } else if (result.stderr.includes('application is required')) {
+    } else if (
+      result.stderr.includes('application is required') ||
+      result.stderr.includes('missing app')
+    ) {
       throw new NotEnoughContextError(HumanitecContext.APP);
-    } else if (result.stderr.includes('organization is required')) {
+    } else if (
+      result.stderr.includes('organization is required') ||
+      result.stderr.includes('missing org')
+    ) {
       throw new NotEnoughContextError(HumanitecContext.ORG);
     } else if (result.stderr.includes('no deployments in environment')) {
       throw new NoDeploymentsInEnvironmentError(

@@ -7,6 +7,11 @@ export interface IEnvironmentRepository {
     organizationId: string,
     applicationId: string
   ): Promise<Environment[]>;
+  get(
+    organizationId: string,
+    applicationId: string,
+    environmentId: string
+  ): Promise<Environment>;
 }
 
 interface RawEnvironment {
@@ -15,6 +20,7 @@ interface RawEnvironment {
   };
   entity: {
     name: string;
+    from_deploy: string | null;
   };
 }
 
@@ -53,11 +59,48 @@ export class EnvironmentRepository implements IEnvironmentRepository {
         rawEnvironment['metadata']['id'],
         rawEnvironment['entity']['name'],
         organizationId,
-        applicationId
+        applicationId,
+        rawEnvironment.entity.from_deploy
       );
       environments.push(environment);
     });
 
     return environments;
+  }
+
+  async get(
+    organizationId: string,
+    applicationId: string,
+    environmentId: string
+  ): Promise<Environment> {
+    const result = await this.humctl.execute([
+      '--org',
+      organizationId,
+      '--app',
+      applicationId,
+      'get',
+      'envs',
+      environmentId,
+    ]);
+    if (result.stderr !== '') {
+      throw new HumctlError(
+        'humctl --org ' +
+          organizationId +
+          ' --app ' +
+          applicationId +
+          ' get envs',
+        result.stderr,
+        result.exitcode
+      );
+    }
+
+    const rawEnvironment = JSON.parse(result.stdout) as RawEnvironment;
+    return new Environment(
+      rawEnvironment['metadata']['id'],
+      rawEnvironment['entity']['name'],
+      organizationId,
+      applicationId,
+      rawEnvironment.entity.from_deploy
+    );
   }
 }
