@@ -10,6 +10,7 @@ import { HumctlError } from '../errors/HumctlError';
 export interface IResourceTypeRepository {
   getAvailable(): Promise<ResourceType[]>;
   get(name: string): Promise<ResourceType>;
+  getAvailableRaw(organizationId: string): Promise<unknown>;
 }
 
 interface Properties {
@@ -41,6 +42,19 @@ interface AvailableResourceTypeOutput {
 
 export class ResourceTypeRepository implements IResourceTypeRepository {
   constructor(private humctl: IHumctlAdapter) {}
+
+  async getAvailableRaw(organizationId: string): Promise<unknown> {
+    const typesUrl = `/orgs/${organizationId}/resources/types`;
+    const result = await this.humctl.execute(['api', 'get', typesUrl]);
+    if (result.stderr !== '') {
+      throw new HumctlError(
+        'humctl api get ' + typesUrl,
+        result.stderr,
+        result.exitcode
+      );
+    }
+    return JSON.parse(result.stdout);
+  }
 
   async get(type: string): Promise<ResourceType> {
     const result = await this.humctl.execute([
