@@ -1,0 +1,53 @@
+{
+  "name": "resource-dependency-graph",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@humanitec/resource-graph": "^0.2.0",
+    "@testing-library/jest-dom": "^5.17.0",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
+    "@types/jest": "^27.5.2",
+    "@types/node": "^16.18.119",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vscode/webview-ui-toolkit": "^1.4.0",
+    "@xyflow/react": "^12.3.5",
+    "polished": "^4.3.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-scripts": "5.0.1",
+    "typescript": "^4.9.5",
+    "web-vitals": "^2.1.4"
+  },
+  "source": "src/index.tsx",
+  "scripts": {
+    "start": "parcel",
+    "build": "parcel build --no-optimize",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@types/styled-components": "^5.1.34",
+    "parcel": "^2.13.0",
+    "process": "^0.11.10"
+  }
+}
