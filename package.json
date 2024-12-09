@@ -46,6 +46,12 @@
       ]
     },
     "menus": {
+      "commandPalette": [
+        {
+          "command": "humanitec.sidebar.organization_structure.set_in_workspace",
+          "when": "false"
+        }
+      ],
       "view/title": [
         {
           "command": "humanitec.sidebar.availableResources.refreshEntries",
