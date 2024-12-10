@@ -55,6 +55,23 @@ Effortlessly switch between different organizations, applications, and environme
 3. Open Humanitec side and set context by right-clicking to the element of the `Organization structure` and choosing `Set in workspace` option.
 4. You're ready to go!
 
+### Debug
+
+To run the VSCode Extension from code in debug mode:
+
+1. Open this repository in Visual Studio Code.
+2. Build all webview applications:
+   1. Navigate to `webview/[webview application name]`.
+   2. Run `npm install`.
+   3. Run `npm run start` (for development) or `npm run build` (for production).
+3. Build the VSCode Extension:
+   1. Navigate to the root folder of the repository.
+   2. Run `npm install`.
+   3. Run `npm run watch` (for development) or `npm run build` (for production).
+4. Select the `Run and Debug` tab from the VSCode sidebar.
+5. Click the `Start Debugging` button.
+6. A new VSCode window will open with the debug version of the extension installed.
+
 ## Feedback and Issues
 
 We welcome your feedback and encourage you to report any issues you encounter. Feel free to open an issue on our [GitHub repository](https://github.com/humanitec/vscode-humanitec/issues).
