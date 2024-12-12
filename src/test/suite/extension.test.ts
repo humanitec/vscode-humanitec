@@ -119,7 +119,8 @@ suite('Extension Test Suite', () => {
           'development',
           'Development',
           humanitecOrg,
-          'not-found-app'
+          'not-found-app',
+          null
         )
       );
 
@@ -134,7 +135,9 @@ suite('Extension Test Suite', () => {
       );
 
       expect(showErrorMessage).to.have.been.calledWith(
-        'Command: humctl resources graph returned an unexpected error',
+        'Command: humctl --org ' +
+          humanitecOrg +
+          ' --app not-found-app get envs returned an unexpected error',
         'Show output log'
       );
     });
@@ -147,7 +150,8 @@ suite('Extension Test Suite', () => {
           'development',
           'Development',
           humanitecOrg,
-          'not-deployed'
+          'not-deployed',
+          null
         )
       );
 
@@ -169,7 +173,13 @@ suite('Extension Test Suite', () => {
     expectWindowsTest('works with a deployed app / env', async () => {
       await vscode.commands.executeCommand(
         'humanitec.sidebar.organization_structure.set_in_workspace',
-        new Environment('development', 'Development', humanitecOrg, 'deployed')
+        new Environment(
+          'development',
+          'Development',
+          humanitecOrg,
+          'deployed',
+          null
+        )
       );
 
       await vscode.commands.executeCommand('humanitec.display_resources_graph');
@@ -178,7 +188,7 @@ suite('Extension Test Suite', () => {
         () => {
           expect(
             vscode.window.tabGroups.activeTabGroup.activeTab?.label
-          ).to.equal('Resources Graph');
+          ).to.equal('Resource Dependency Graph');
         },
         10000,
         500
