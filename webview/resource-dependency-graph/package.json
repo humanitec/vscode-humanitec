@@ -21,7 +21,8 @@
     "web-vitals": "^2.1.4"
   },
   "overrides": {
-  	"resolve-url-loader": "^5.0.0"
+  	"resolve-url-loader": "^5.0.0",
+  	"@svgr/webpack": "^8.1.0"
   },
   "source": "src/index.tsx",
   "scripts": {
