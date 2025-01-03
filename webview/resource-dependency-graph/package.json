@@ -20,6 +20,9 @@
     "typescript": "^4.9.5",
     "web-vitals": "^2.1.4"
   },
+  "overrides": {
+  	"resolve-url-loader": "^5.0.0"
+  },
   "source": "src/index.tsx",
   "scripts": {
     "start": "parcel",
