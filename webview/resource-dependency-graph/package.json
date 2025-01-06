@@ -20,6 +20,10 @@
     "typescript": "^4.9.5",
     "web-vitals": "^2.1.4"
   },
+  "overrides": {
+    "nth-check": ">=2.0.2",
+    "postcss": ">=8.4.31"
+  },
   "source": "src/index.tsx",
   "scripts": {
     "start": "parcel",
@@ -50,8 +54,4 @@
     "parcel": "^2.13.0",
     "process": "^0.11.10"
   },
-  "overrides": {
-    "nth-check": ">=2.0.2",
-    "postcss": ">=8.4.31"
-  }
 }
