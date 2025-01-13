@@ -38,6 +38,11 @@ export default tseslint.config(
   },
   eslintPluginPrettierRecommended,
   {
-    ignores: ['out/', 'dist/', '.vscode-test/'],
+    ignores: [
+      'out/',
+      'dist/',
+      '.vscode-test/',
+      'webview/resource-dependency-graph/dist/',
+    ],
   }
 );
