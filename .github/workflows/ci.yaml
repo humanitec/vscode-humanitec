@@ -27,12 +27,16 @@ jobs:
       - name: Authenticate with private NPM package
         run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
 
+      - name: Install graph webview dependencies
+        working-directory: ./webview/resource-dependency-graph
+        run: npm install
+
       - name: Build graph webview
         working-directory: ./webview/resource-dependency-graph
-        run: npm ci
+        run: npm run build
 
       - run: npm ci
-
+      
       - run: npm run lint
         if: runner.os == 'Linux'
 

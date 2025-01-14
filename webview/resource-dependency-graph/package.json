@@ -47,11 +47,16 @@
   },
   "devDependencies": {
     "@types/styled-components": "^5.1.34",
-    "parcel": "^2.13.0",
-    "process": "^0.11.10"
+    "parcel": "^2.13.3",
+    "process": "^0.11.10",
+    "buffer": "^5.5.0"
   },
   "overrides": {
     "nth-check": ">=2.0.2",
     "postcss": ">=8.4.31"
-  }
+  },
+  "alias": {
+    "process": "process/browser.js",
+    "buffer": "buffer"
+ }
 }
