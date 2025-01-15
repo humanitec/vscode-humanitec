@@ -45,8 +45,7 @@ Effortlessly switch between different organizations, applications, and environme
 
 ### Installation
 
-1. Download the latest vsix package: [releases](https://github.com/humanitec/vscode-humanitec/releases/latest)
-2. Install vsix package using terminal: `code --install-extension humanitec-*.vsix` or following this guide: [Managing Extensions in Visual Studio Code](https://code.visualstudio.com/docs/editor/extension-marketplace#_install-from-a-vsix)
+The preferred way to install the extension in VS Code is through the **Extensions Manager** built into the editor or directly from the [**Visual Studio Marketplace**](https://marketplace.visualstudio.com/items?itemName=humanitec.humanitec). This ensures safe, verified installations and easy updates.
 
 ### Configuration
 
