@@ -42,6 +42,7 @@ export class HumctlAdapter implements IHumctlAdapter {
       throw new UnsupportedOperatingSystemError(os, arch);
     }
 
+    // TODO: upgrade to a later version once https://github.com/humanitec/cli-internal/pull/257/ is merged.
     let humctlEmbeddedBinaryFilename = `cli_0.28.0_${os}_${arch}`;
     if (os === 'win32') {
       humctlEmbeddedBinaryFilename += '.exe';
@@ -134,6 +135,7 @@ export class HumctlAdapter implements IHumctlAdapter {
       HUMANITEC_ENV: env,
       HUMANITEC_OUTPUT: 'json',
       HUMANITEC_CLI_ALPHA_FEATURES: '',
+      HUMANITEC_OVERRIDE_USER_AGENT: 'humanitec-vscode-extension/unspecified',
     };
   }
 }
