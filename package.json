@@ -193,7 +193,7 @@
     "eslint-plugin-prettier": "^5.2.1",
     "extract-zip": "^2.0.1",
     "husky": "^9.1.7",
-    "lint-staged": "^15.2.11",
+    "lint-staged": "^15.4.1",
     "mocha": "^10.8.2",
     "prettier": "^3.4.2",
     "sinon": "^19.0.2",
