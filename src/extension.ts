@@ -23,6 +23,8 @@ import { ActiveResourcesRepository } from './repos/ActiveResourcesRepository';
 import { DependencyGraphRepository } from './repos/DependencyGraphRepository';
 import { ResourceDefinitionRepository } from './repos/ResourceDefinitionRepository';
 
+export const VsceVersion = 'unspecified';
+
 export const loggerChannel = vscode.window.createOutputChannel('Humanitec');
 
 export async function activate(context: vscode.ExtensionContext) {
