@@ -44,7 +44,7 @@ export class HumctlAdapter implements IHumctlAdapter {
     }
 
     // TODO: upgrade to a later version once https://github.com/humanitec/cli-internal/pull/257/ is merged.
-    let humctlEmbeddedBinaryFilename = `cli_0.36.2_${os}_${arch}`;
+    let humctlEmbeddedBinaryFilename = `cli_0.37.0_${os}_${arch}`;
     if (os === 'win32') {
       humctlEmbeddedBinaryFilename += '.exe';
     }
