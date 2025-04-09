@@ -100,6 +100,9 @@ export class DisplayResourcesGraphController {
                   panel.webview.postMessage({
                     type: 'resource-dependency-graph-data',
                     value: {
+                      orgId,
+                      appId,
+                      envId,
                       activeResources,
                       deployment,
                       dependencyGraph,
