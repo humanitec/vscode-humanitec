@@ -21,6 +21,9 @@ interface vscode {
 declare const vscode: vscode;
 
 interface resourceDependencyGraphData {
+  orgId: string;
+  appId: string;
+  envId: string;
   activeResources: ActiveResource[];
   deployment: DeploymentObject;
   dependencyGraph: ResourceDependencyGraphModel;
@@ -47,6 +50,9 @@ function App() {
       switch (msg.data.type) {
         case 'resource-dependency-graph-data': {
           const {
+            orgId,
+            appId,
+            envId,
             activeResources,
             deployment,
             dependencyGraph,
@@ -55,6 +61,9 @@ function App() {
           } = msg.data.value;
 
           setResourceDependencyGraphData({
+            orgId,
+            appId,
+            envId,
             activeResources,
             deployment,
             dependencyGraph,
@@ -118,6 +127,7 @@ function App() {
           resourceDefinitions={resourceDependencyGraphData!.resourceDefinitions}
           resourceTypes={resourceDependencyGraphData!.resourceTypes}
           activeResources={resourceDependencyGraphData!.activeResources}
+          resourceDependencyGraphLink={`https://app.humanitec.io/orgs/${resourceDependencyGraphData!.orgId}/apps/${resourceDependencyGraphData!.appId}/envs/${resourceDependencyGraphData!.envId}/resource-graph`}
         />
       </Wrapper>
     </ThemeProvider>

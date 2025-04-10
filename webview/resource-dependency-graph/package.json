@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@humanitec/resource-graph": "^0.2.0",
+    "@humanitec/resource-graph": "^0.3.4",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
@@ -47,9 +47,9 @@
   },
   "devDependencies": {
     "@types/styled-components": "^5.1.34",
+    "buffer": "^5.5.0",
     "parcel": "^2.13.3",
-    "process": "^0.11.10",
-    "buffer": "^5.5.0"
+    "process": "^0.11.10"
   },
   "overrides": {
     "nth-check": ">=2.0.2",
@@ -58,5 +58,5 @@
   "alias": {
     "process": "process/browser.js",
     "buffer": "buffer"
- }
+  }
 }
