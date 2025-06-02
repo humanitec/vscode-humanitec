@@ -188,7 +188,7 @@
     "@vscode/test-electron": "^2.5.2",
     "@vscode/vsce": "^3.4.2",
     "chai": "^4.5.0",
-    "eslint": "^9.27.0",
+    "eslint": "^9.28.0",
     "eslint-config-prettier": "^10.1.5",
     "eslint-plugin-prettier": "^5.4.0",
     "extract-zip": "^2.0.1",
