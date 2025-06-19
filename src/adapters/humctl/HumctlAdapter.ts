@@ -43,7 +43,7 @@ export class HumctlAdapter implements IHumctlAdapter {
       throw new UnsupportedOperatingSystemError(os, arch);
     }
 
-    let humctlEmbeddedBinaryFilename = `cli_0.39.4_${os}_${arch}`;
+    let humctlEmbeddedBinaryFilename = `cli_0.39.8_${os}_${arch}`;
     if (os === 'win32') {
       humctlEmbeddedBinaryFilename += '.exe';
     }

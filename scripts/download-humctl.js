@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const CLI_VERSION = '0.39.4';
+const CLI_VERSION = '0.39.8';
 
 const fs = require('node:fs/promises');
 const extractZip = require('extract-zip');
