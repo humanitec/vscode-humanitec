@@ -56,6 +56,7 @@ export class DisplayResourcesGraphController {
               'webview',
               'resource-dependency-graph',
               'dist',
+              'assets',
               'index.js'
             )
           );
@@ -66,6 +67,7 @@ export class DisplayResourcesGraphController {
               'webview',
               'resource-dependency-graph',
               'dist',
+              'assets',
               'index.css'
             )
           );
