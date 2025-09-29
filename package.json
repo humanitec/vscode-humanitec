@@ -184,7 +184,7 @@
     "@types/sinon": "^17.0.4",
     "@types/sinon-chai": "^3.2.12",
     "@types/vscode": "1.87.0",
-    "@vscode/test-cli": "^0.0.10",
+    "@vscode/test-cli": "^0.0.11",
     "@vscode/test-electron": "^2.5.2",
     "@vscode/vsce": "^3.6.2",
     "chai": "^4.5.0",
