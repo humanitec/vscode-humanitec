@@ -24,7 +24,7 @@ interface Properties {
   required: string[];
 }
 
-interface Schema {
+interface OutputSchema {
   properties: {
     values?: Properties;
     secrets?: Properties;
@@ -35,8 +35,8 @@ interface AvailableResourceTypeOutput {
   Name: string;
   Type: string;
   Category: string;
-  InputsSchema: Schema;
-  OutputsSchema: Schema;
+  InputsSchema: Properties;
+  OutputsSchema: OutputSchema;
   Classes: { [key: string]: string };
 }
 
@@ -90,8 +90,8 @@ export class ResourceTypeRepository implements IResourceTypeRepository {
       resourceType.Category,
       resourceType.Name,
       resourceType.Type,
-      this.resolveSchema(resourceType.InputsSchema),
-      this.resolveSchema(resourceType.OutputsSchema),
+      this.resolveProperties(resourceType.InputsSchema),
+      this.resolveOutputSchema(resourceType.OutputsSchema),
       resourceTypeClasses
     );
   }
@@ -126,8 +126,8 @@ export class ResourceTypeRepository implements IResourceTypeRepository {
         availableResourceType.Category,
         availableResourceType.Name,
         availableResourceType.Type,
-        this.resolveSchema(availableResourceType.InputsSchema),
-        this.resolveSchema(availableResourceType.OutputsSchema),
+        this.resolveProperties(availableResourceType.InputsSchema),
+        this.resolveOutputSchema(availableResourceType.OutputsSchema),
         resourceTypeClasses
       );
       resourceTypes.push(resourceType);
@@ -135,8 +135,8 @@ export class ResourceTypeRepository implements IResourceTypeRepository {
     return resourceTypes;
   }
 
-  private resolveSchema(
-    rawSchema: Schema | null
+  private resolveOutputSchema(
+    rawSchema: OutputSchema | null
   ): Map<string, ResourceTypeVariable> {
     const result = new Map<string, ResourceTypeVariable>();
     if (rawSchema === null) {
@@ -167,6 +167,9 @@ export class ResourceTypeRepository implements IResourceTypeRepository {
     rawVariables: Properties
   ): Map<string, ResourceTypeVariable> {
     const result = new Map<string, ResourceTypeVariable>();
+    if (rawVariables === undefined || rawVariables === null) {
+      return result;
+    }
     const properties = rawVariables['properties'];
     if (properties === undefined) {
       return result;
