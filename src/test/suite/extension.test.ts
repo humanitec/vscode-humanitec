@@ -1,4 +1,3 @@
-import { suite, beforeEach, afterEach, test } from 'mocha';
 import sinon from 'sinon';
 import chai from 'chai';
 import sinonChai from 'sinon-chai';
@@ -26,7 +25,7 @@ suite('Extension Test Suite', () => {
 
   const outputs: string[] = [];
 
-  beforeEach(async () => {
+  setup(async () => {
     sandbox = sinon.createSandbox();
     showErrorMessage = sandbox
       .stub(vscode.window, 'showErrorMessage')
@@ -55,7 +54,7 @@ suite('Extension Test Suite', () => {
     await vscode.commands.executeCommand('humanitec.set_token');
   });
 
-  afterEach(() => {
+  teardown(() => {
     sandbox.restore();
   });
 
