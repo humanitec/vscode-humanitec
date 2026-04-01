@@ -127,7 +127,6 @@ function App() {
           resourceDefinitions={resourceDependencyGraphData!.resourceDefinitions}
           resourceTypes={resourceDependencyGraphData!.resourceTypes}
           activeResources={resourceDependencyGraphData!.activeResources}
-          resourceDependencyGraphLink={`https://app.humanitec.io/orgs/${resourceDependencyGraphData!.orgId}/apps/${resourceDependencyGraphData!.appId}/envs/${resourceDependencyGraphData!.envId}/resource-graph`}
         />
       </Wrapper>
     </ThemeProvider>
