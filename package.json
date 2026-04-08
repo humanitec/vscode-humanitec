@@ -207,5 +207,8 @@
     "crypto": "^1.0.1",
     "js-yaml": "^4.1.1",
     "yaml": "^2.8.3"
+  },
+  "overrides": {
+    "serialize-javascript": "^7.0.3"
   }
 }
