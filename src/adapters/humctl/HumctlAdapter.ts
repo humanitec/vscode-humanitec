@@ -15,6 +15,7 @@ import { UnsupportedOperatingSystemError } from '../../errors/UnsupportedOperati
 import path from 'path';
 import { ExtensionContext } from 'vscode';
 import { NoDeploymentsInEnvironmentError } from '../../errors/NoDeploymentsInEnvironmentError';
+import { VsceVersion } from '../../extension';
 
 export class HumctlAdapter implements IHumctlAdapter {
   constructor(
@@ -42,7 +43,7 @@ export class HumctlAdapter implements IHumctlAdapter {
       throw new UnsupportedOperatingSystemError(os, arch);
     }
 
-    let humctlEmbeddedBinaryFilename = `cli_0.28.0_${os}_${arch}`;
+    let humctlEmbeddedBinaryFilename = `cli_0.39.8_${os}_${arch}`;
     if (os === 'win32') {
       humctlEmbeddedBinaryFilename += '.exe';
     }
@@ -88,11 +89,20 @@ export class HumctlAdapter implements IHumctlAdapter {
       result.stderr.includes('HTTP-403')
     ) {
       throw new UnauthorizedError();
-    } else if (result.stderr.includes('environment is required')) {
+    } else if (
+      result.stderr.includes('environment is required') ||
+      result.stderr.includes('missing env')
+    ) {
       throw new NotEnoughContextError(HumanitecContext.ENV);
-    } else if (result.stderr.includes('application is required')) {
+    } else if (
+      result.stderr.includes('application is required') ||
+      result.stderr.includes('missing app')
+    ) {
       throw new NotEnoughContextError(HumanitecContext.APP);
-    } else if (result.stderr.includes('organization is required')) {
+    } else if (
+      result.stderr.includes('organization is required') ||
+      result.stderr.includes('missing org')
+    ) {
       throw new NotEnoughContextError(HumanitecContext.ORG);
     } else if (result.stderr.includes('no deployments in environment')) {
       throw new NoDeploymentsInEnvironmentError(
@@ -125,6 +135,7 @@ export class HumctlAdapter implements IHumctlAdapter {
       HUMANITEC_ENV: env,
       HUMANITEC_OUTPUT: 'json',
       HUMANITEC_CLI_ALPHA_FEATURES: '',
+      HUMANITEC_OVERRIDE_USER_AGENT: `humanitec-vscode-extension/${VsceVersion}`,
     };
   }
 }

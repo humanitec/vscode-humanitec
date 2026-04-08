@@ -22,10 +22,21 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18.x
+          node-version: 24.x
+
+      - name: Authenticate with private NPM package
+        run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
+
+      - name: Install graph webview dependencies
+        working-directory: ./webview/resource-dependency-graph
+        run: npm install
+
+      - name: Build graph webview
+        working-directory: ./webview/resource-dependency-graph
+        run: npm run build
 
       - run: npm ci
-
+      
       - run: npm run lint
         if: runner.os == 'Linux'
 
@@ -34,6 +45,11 @@ jobs:
 
       - run: npm test
         if: runner.os != 'Linux'
+
+      - if: startsWith(github.ref, 'refs/tags/') && runner.os == 'Linux'
+        name: Inject user agent version
+        run:
+            sed -i "s/VsceVersion = 'unspecified'/VsceVersion = '${{ github.ref_name }}'/g" src/extension.ts
 
       - name: Validate extension is packable
         if: runner.os == 'Linux'

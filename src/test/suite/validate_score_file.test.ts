@@ -1,5 +1,4 @@
 import * as vscode from 'vscode';
-import { suite, beforeEach, before, afterEach, test } from 'mocha';
 import sinon from 'sinon';
 import path from 'path';
 import waitForExpect from 'wait-for-expect';
@@ -45,7 +44,7 @@ expectWindowsSuite('When validate score file command triggered', () => {
     return fakeItem;
   };
 
-  before(async () => {
+  suiteSetup(async () => {
     if (!vscode.workspace.workspaceFolders) {
       throw new Error('Workspace folder not found');
     }
@@ -63,7 +62,7 @@ expectWindowsSuite('When validate score file command triggered', () => {
     //await vscode.window.showTextDocument(doc);
   });
 
-  beforeEach(async () => {
+  setup(async () => {
     sandbox = sinon.createSandbox();
     sandbox
       .stub(vscode.window, 'createStatusBarItem')
@@ -78,7 +77,7 @@ expectWindowsSuite('When validate score file command triggered', () => {
       );
   });
 
-  afterEach(() => {
+  teardown(() => {
     sandbox.restore();
   });
 
