@@ -11,3 +11,8 @@ updates:
       interval: "weekly"
     ignore:
     - dependency-name: "@types/vscode" # Needs to be kept in sync with package.json `engines.vscode`
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
