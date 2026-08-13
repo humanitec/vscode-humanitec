@@ -7,3 +7,4 @@ node_modules
 sandbox/
 .vscode/settings.json
 humctl/cli_*
+.env*

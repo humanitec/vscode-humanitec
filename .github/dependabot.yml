@@ -7,9 +7,12 @@ version: 2
 updates:
   - package-ecosystem: "npm" # See documentation for possible values
     directory: "/" # Location of package manifests
-    # Disable updates except for vulnerabilities
-    open-pull-requests-limit: 0
     schedule:
       interval: "weekly"
     ignore:
     - dependency-name: "@types/vscode" # Needs to be kept in sync with package.json `engines.vscode`
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
