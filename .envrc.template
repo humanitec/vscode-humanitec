@@ -1,0 +1,2 @@
+# To install @humanitec private packages from GH
+export NPM_TOKEN=
