@@ -149,7 +149,7 @@ export class DisplayResourcesGraphController {
                 console.log('HTML started up.');
               };
             </script>
-            <script src="${scriptSrc}"></script>
+            <script type="module" src="${scriptSrc}"></script>
           </body>
         </html>
         `;
