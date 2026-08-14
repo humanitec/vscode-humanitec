@@ -9,6 +9,8 @@ import { IResourceDefinitionRepository } from '../repos/ResourceDefinitionReposi
 import { ConfigKey } from '../domain/ConfigKey';
 import { IEnvironmentRepository } from '../repos/EnvironmentRepository';
 import { NoDeploymentsInEnvironmentError } from '../errors/NoDeploymentsInEnvironmentError';
+import { NotEnoughContextError } from '../errors/NotEnoughContextError';
+import { HumanitecContext } from '../domain/HumanitecContext';
 
 export class DisplayResourcesGraphController {
   private constructor() {}
@@ -31,6 +33,16 @@ export class DisplayResourcesGraphController {
           const orgId = await configs.get(ConfigKey.HUMANITEC_ORG);
           const appId = await configs.get(ConfigKey.HUMANITEC_APP);
           const envId = await configs.get(ConfigKey.HUMANITEC_ENV);
+
+          if (orgId === '') {
+            throw new NotEnoughContextError(HumanitecContext.ORG);
+          }
+          if (appId === '') {
+            throw new NotEnoughContextError(HumanitecContext.APP);
+          }
+          if (envId === '') {
+            throw new NotEnoughContextError(HumanitecContext.ENV);
+          }
 
           const environment = await environmentRepository.get(
             orgId,
