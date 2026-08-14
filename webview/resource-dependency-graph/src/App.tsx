@@ -147,6 +147,7 @@ function App() {
           resourceDefinitions={resourceDependencyGraphData!.resourceDefinitions}
           resourceTypes={resourceDependencyGraphData!.resourceTypes}
           activeResources={resourceDependencyGraphData!.activeResources}
+          resourceDependencyGraphLink={null}
         />
       </Wrapper>
     </ThemeProvider>
