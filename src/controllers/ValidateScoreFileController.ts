@@ -63,7 +63,10 @@ export class ValidateScoreFileController {
         );
         this.instance.diagnosticCollections.clear();
 
-        const files = await vscode.workspace.findFiles('**/*.{yaml,yml}');
+        const files = await vscode.workspace.findFiles(
+          '**/*.{yaml,yml}',
+          '**/node_modules/**'
+        );
         files.forEach(async file => {
           try {
             const textDocument = await readScoreDocument(file);
