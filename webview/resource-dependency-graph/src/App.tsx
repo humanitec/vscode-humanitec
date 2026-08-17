@@ -77,6 +77,7 @@ function App() {
   }, []);
 
   const theme: GraphTheme = {
+    dark: true,
     color: {
       white: '#FFF',
       black: '#000',
@@ -87,16 +88,35 @@ function App() {
       baseBrighter: '#24252B',
       baseBrightest: '#0b0b0f',
       baseOutline: '#414450',
+      baseSecondaryButton: '#3C3E42',
       baseLayer: '#0D0D0D',
+      baseShadow: 'rgba(18, 22, 25, 0.15)',
       // Main
       mainDarker: '#0049BD',
       main: '#0062FF',
       mainBrighter: '#428BFF',
       mainTransparent: '#428BFF',
+      mainTransparentSolid: '#28374C',
+      mainTransparentFlat: '#28374C',
+      // Alert
+      alert: '#E80000',
+      alertBrighter: '#FF6B6B',
+      alertBrightest: '#FF4970',
+      alertDarker: '#B20000',
+      alertInput: '#48222D',
+      alertTransparent: 'rgba(243, 1, 54, 0.17)',
+      alertTransparentFlat: '#48222D',
       // Text
       text: '#FAFAFA',
       textTranslucent: '#BDBDBD',
       // Other
+      green: '#50D37D',
+      yellow: '#F1C21B',
+      yellowTransparent: 'rgba(241, 194, 27, 0.05)',
+      // Table
+      tableRowHover: '#2156F60D',
+      // Date Picker
+      datePickerColorScheme: 'dark',
       categoricalPalette: {
         purple: '#6929c4',
         cyan: '#1192e8',
@@ -127,6 +147,7 @@ function App() {
           resourceDefinitions={resourceDependencyGraphData!.resourceDefinitions}
           resourceTypes={resourceDependencyGraphData!.resourceTypes}
           activeResources={resourceDependencyGraphData!.activeResources}
+          resourceDependencyGraphLink={null}
         />
       </Wrapper>
     </ThemeProvider>
