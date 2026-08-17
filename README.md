@@ -71,6 +71,21 @@ To run the VSCode Extension from code in debug mode:
 5. Click the `Start Debugging` button.
 6. A new VSCode window will open with the debug version of the extension installed.
 
+## Publishing
+
+To publish a new version to the VS Code Marketplace, on `main`:
+
+```
+git tag v0.4.0
+git push origin v0.4.0
+```
+
+CI picks up the tag push and packages, versions, and publishes the extension automatically.
+
+Verify new release [here](https://marketplace.visualstudio.com/manage/publishers/humanitec). 
+
+Marketplace may show "Verifying..." for few minutes after publish before it goes live.
+
 ## Feedback and Issues
 
 We welcome your feedback and encourage you to report any issues you encounter. Feel free to open an issue on our [GitHub repository](https://github.com/humanitec/vscode-humanitec/issues).
