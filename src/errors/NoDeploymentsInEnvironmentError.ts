@@ -1,8 +1,6 @@
 import { IHumanitecExtensionError } from './IHumanitecExtensionError';
 
-export class NoDeploymentsInEnvironmentError
-  implements IHumanitecExtensionError
-{
+export class NoDeploymentsInEnvironmentError implements IHumanitecExtensionError {
   constructor(private environment: string) {}
 
   message(): string {

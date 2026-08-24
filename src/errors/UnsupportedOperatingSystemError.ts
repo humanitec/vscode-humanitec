@@ -1,8 +1,6 @@
 import { IHumanitecExtensionError } from './IHumanitecExtensionError';
 
-export class UnsupportedOperatingSystemError
-  implements IHumanitecExtensionError
-{
+export class UnsupportedOperatingSystemError implements IHumanitecExtensionError {
   constructor(
     private os: string,
     private arch: string

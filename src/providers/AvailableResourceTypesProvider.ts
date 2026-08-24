@@ -3,9 +3,7 @@ import { ResourceTypeVariable } from '../domain/ResourceType';
 import { IResourceTypeRepository } from '../repos/ResourceTypeRepository';
 import { IErrorHandlerService } from '../services/ErrorHandlerService';
 
-export class AvailableResourceTypesProvider
-  implements vscode.TreeDataProvider<AvailableResourceTypesTreeItem>
-{
+export class AvailableResourceTypesProvider implements vscode.TreeDataProvider<AvailableResourceTypesTreeItem> {
   constructor(
     private resourceTypeRepository: IResourceTypeRepository,
     private errorHandler: IErrorHandlerService

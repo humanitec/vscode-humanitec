@@ -168,6 +168,7 @@
     "watch": "tsc -watch -p ./",
     "pretest": "npm run compile",
     "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "test": "vscode-test",
     "prettier": "npx prettier . --write",
     "package": "vsce package",
