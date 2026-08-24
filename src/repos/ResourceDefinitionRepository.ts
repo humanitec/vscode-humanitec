@@ -5,9 +5,7 @@ export interface IResourceDefinitionRepository {
   getAllRaw(organizationId: string): Promise<unknown>;
 }
 
-export class ResourceDefinitionRepository
-  implements IResourceDefinitionRepository
-{
+export class ResourceDefinitionRepository implements IResourceDefinitionRepository {
   constructor(private humctl: IHumctlAdapter) {}
   async getAllRaw(organizationId: string): Promise<unknown> {
     const defUrl = `/orgs/${organizationId}/resources/defs`;

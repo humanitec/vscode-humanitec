@@ -1,8 +1,6 @@
 import { IHumanitecExtensionError } from './IHumanitecExtensionError';
 
-export class ControllerIsAlreadyRegisteredError
-  implements IHumanitecExtensionError
-{
+export class ControllerIsAlreadyRegisteredError implements IHumanitecExtensionError {
   constructor(private controllerName: string) {}
 
   message(): string {

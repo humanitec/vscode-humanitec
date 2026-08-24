@@ -10,9 +10,7 @@ import { ConfigKey } from '../domain/ConfigKey';
 import path from 'path';
 import { IErrorHandlerService } from '../services/ErrorHandlerService';
 
-export class OrganizationStructureProvider
-  implements vscode.TreeDataProvider<OrganizationStructureItem>
-{
+export class OrganizationStructureProvider implements vscode.TreeDataProvider<OrganizationStructureItem> {
   constructor(
     private organizationRepository: IOrganizationRepository,
     private applicationRepository: IApplicationRepository,
@@ -122,9 +120,7 @@ export class OrganizationStructureProvider
 }
 
 export type OrganizationStructureItem =
-  | Organization
-  | Application
-  | Environment;
+  Organization | Application | Environment;
 
 class OrganizationStructureTreeItem extends vscode.TreeItem {
   constructor(element: OrganizationStructureItem, isConfigured: boolean) {
