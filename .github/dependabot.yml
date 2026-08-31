@@ -11,6 +11,8 @@ updates:
       interval: "weekly"
     ignore:
     - dependency-name: "@types/vscode" # Needs to be kept in sync with package.json `engines.vscode`
+    - dependency-name: "typescript" # Blocked until typescript-eslint supports TS 7 (peer range is `>=4.8.4 <6.1.0`)
+      versions: [">=7.0.0"]
 
   - package-ecosystem: github-actions
     directory: /
