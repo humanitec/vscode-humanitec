@@ -6,11 +6,29 @@ import {
   DiagnosticCollection,
   DiagnosticSeverity,
   Range,
-  TextDocument,
 } from 'vscode';
 import { IConfigurationRepository } from '../repos/ConfigurationRepository';
 import { ConfigKey } from '../domain/ConfigKey';
 import { IErrorHandlerService } from '../services/ErrorHandlerService';
+
+interface ScoreDocument {
+  uri: vscode.Uri;
+  getText(): string;
+  lineAt(line: number): { range: { end: { character: number } } };
+}
+
+async function readScoreDocument(uri: vscode.Uri): Promise<ScoreDocument> {
+  const bytes = await vscode.workspace.fs.readFile(uri);
+  const text = Buffer.from(bytes).toString('utf8');
+  const lines = text.split('\n');
+  return {
+    uri,
+    getText: () => text,
+    lineAt: (line: number) => ({
+      range: { end: { character: lines[line].replace(/\r$/, '').length } },
+    }),
+  };
+}
 
 export class ValidateScoreFileController {
   private static instance: ValidateScoreFileController;
@@ -45,10 +63,13 @@ export class ValidateScoreFileController {
         );
         this.instance.diagnosticCollections.clear();
 
-        const files = await vscode.workspace.findFiles('**/*.{yaml,yml}');
+        const files = await vscode.workspace.findFiles(
+          '**/*.{yaml,yml}',
+          '**/node_modules/**'
+        );
         files.forEach(async file => {
           try {
-            const textDocument = await vscode.workspace.openTextDocument(file);
+            const textDocument = await readScoreDocument(file);
 
             if (this.instance.isScoreFile(textDocument)) {
               const diagnosticCollection =
@@ -72,9 +93,7 @@ export class ValidateScoreFileController {
         try {
           this.instance.removeDiagnosticCollectionsIfExists(file.oldUri.path);
 
-          const textDocument = await vscode.workspace.openTextDocument(
-            file.newUri
-          );
+          const textDocument = await readScoreDocument(file.newUri);
           if (this.instance.isScoreFile(textDocument)) {
             const diagnosticCollection = this.instance.getDiagnosticCollections(
               textDocument.uri.path
@@ -143,7 +162,7 @@ export class ValidateScoreFileController {
     }
   }
 
-  private isScoreFile(textDocument: TextDocument): boolean {
+  private isScoreFile(textDocument: ScoreDocument): boolean {
     try {
       const loadedYamlDocument: unknown = yaml.load(textDocument.getText());
       if (!(loadedYamlDocument instanceof Object)) {
@@ -161,7 +180,7 @@ export class ValidateScoreFileController {
   private statusBarItem: vscode.StatusBarItem | undefined;
 
   private async validate(
-    textDocument: TextDocument,
+    textDocument: ScoreDocument,
     diagnosticCollection: vscode.DiagnosticCollection,
     context: vscode.ExtensionContext
   ) {
@@ -218,7 +237,7 @@ export class ValidateScoreFileController {
   }
 
   private calculateStartLocation(
-    textDocument: TextDocument,
+    textDocument: ScoreDocument,
     errorLocation: string
   ): Location {
     const locations = errorLocation.substring(1).split('/');

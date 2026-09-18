@@ -1,2 +1,6 @@
 # To install @humanitec private packages from GH
 export NPM_TOKEN=
+
+# To run tests against a Humanitec org
+export TEST_HUMANITEC_ORG=
+export TEST_HUMANITEC_TOKEN=
