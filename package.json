@@ -207,7 +207,7 @@
     "@vscode/webview-ui-toolkit": "^1.4.0",
     "crypto": "^1.0.1",
     "js-yaml": "^5.4.2",
-    "yaml": "^2.9.0"
+    "yaml": "^2.9.1"
   },
   "overrides": {
     "serialize-javascript": "^7.0.3"
