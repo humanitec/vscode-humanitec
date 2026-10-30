@@ -3,8 +3,10 @@
 const CLI_VERSION = '0.41.0';
 
 const fs = require('node:fs/promises');
-const extractZip = require('extract-zip');
+const { createWriteStream } = require('node:fs');
+const { pipeline } = require('node:stream/promises');
 const tar = require('tar');
+const yauzl = require('yauzl');
 const { tmpdir } = require('node:os');
 const path = require('node:path');
 
@@ -39,9 +41,38 @@ const downloadAndExtractGzip = (url, file, dest) => {
   );
 };
 
+// Extracts a single named entry only, so symlinks or traversal paths in the archive are never written.
+const extractZipEntry = (archiveFile, entryName, dest) =>
+  new Promise((resolve, reject) => {
+    yauzl.open(archiveFile, { lazyEntries: true }, (err, zipFile) => {
+      if (err) {
+        return reject(err);
+      }
+      zipFile.on('error', reject);
+      zipFile.on('end', () =>
+        reject(new Error(`${entryName} not found in ${archiveFile}`))
+      );
+      zipFile.on('entry', entry => {
+        if (entry.fileName !== entryName) {
+          zipFile.readEntry();
+          return;
+        }
+        zipFile.openReadStream(entry, (err, stream) => {
+          if (err) {
+            return reject(err);
+          }
+          pipeline(stream, createWriteStream(dest))
+            .then(resolve, reject)
+            .finally(() => zipFile.close());
+        });
+      });
+      zipFile.readEntry();
+    });
+  });
+
 const downloadAndExtractZip = async (url, file, dest) => {
   return downloadAndExtract(url, file, dest, '.zip', (archiveFile, tmpDir) =>
-    extractZip(archiveFile, { dir: tmpDir })
+    extractZipEntry(archiveFile, file, path.join(tmpDir, file))
   );
 };
 
