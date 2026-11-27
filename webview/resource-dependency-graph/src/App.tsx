@@ -15,11 +15,6 @@ import { VSCodeProgressRing } from '@vscode/webview-ui-toolkit/react';
 
 import '@xyflow/react/dist/style.css';
 
-interface vscode {
-  postMessage(message: unknown): void;
-}
-declare const vscode: vscode;
-
 interface resourceDependencyGraphData {
   orgId: string;
   appId: string;
